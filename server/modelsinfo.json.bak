@@ -1,0 +1,760 @@
+{
+  "_comment": "大模型供应商完整接入配置 - 精简版最终 JSON",
+  "_lastUpdated": "2026-04-02",
+  "_formats": {
+    "providerConfigs": "供应商定义",
+    "providerSummaries": "供应商简表",
+    "authProfiles": "认证方式定义",
+    "yourConfiguredProviders": "当前实际启用的认证实例"
+  },
+  "providerConfigs": {
+    "openai": {
+      "name": "OpenAI",
+      "baseUrl": "https://api.openai.com/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "both",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.openai.com/api-keys",
+      "docsUrl": "https://platform.openai.com/docs",
+      "subscriptionUrl": "https://platform.openai.com/settings/organization/billing/overview",
+      "accessModes": ["apikey", "oauth"],
+      "models": [
+        { "id": "gpt-5.4", "name": "GPT-5.4", "type": "text" },
+        { "id": "gpt-5.4-mini", "name": "GPT-5.4 Mini", "type": "text" },
+        { "id": "gpt-4.1", "name": "GPT-4.1", "type": "text" },
+        { "id": "gpt-4o", "name": "GPT-4o", "type": "text" },
+        { "id": "o3", "name": "o3", "type": "text" },
+        { "id": "gpt-image-1", "name": "GPT Image 1", "type": "image" },
+        { "id": "whisper-1", "name": "Whisper-1", "type": "audio" },
+        { "id": "sora", "name": "Sora", "type": "video" }
+      ]
+    },
+    "openai_codex": {
+      "name": "OpenAI Codex",
+      "baseUrl": "https://api.openai.com/v1",
+      "authType": "oauth",
+      "authHeader": "Authorization",
+      "billingType": "subscription",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.openai.com/settings/organization/billing/overview",
+      "docsUrl": "https://platform.openai.com/docs",
+      "subscriptionUrl": "https://platform.openai.com/settings/organization/billing/overview",
+      "accessModes": ["oauth"],
+      "models": [
+        { "id": "gpt-5.4", "name": "GPT-5.4", "type": "text" },
+        { "id": "gpt-5.4-mini", "name": "GPT-5.4 Mini", "type": "text" },
+        { "id": "o3", "name": "o3", "type": "text" }
+      ]
+    },
+    "github_copilot": {
+      "name": "GitHub Copilot",
+      "baseUrl": "https://api.githubcopilot.com/chat/completions",
+      "authType": "token",
+      "authHeader": "Authorization",
+      "tokenType": "Bearer",
+      "billingType": "subscription",
+      "apiFormat": "openai",
+      "loginUrl": "https://github.com/features/copilot",
+      "docsUrl": "https://docs.github.com/en/copilot",
+      "subscriptionUrl": "https://github.com/settings/copilot",
+      "accessModes": ["token"],
+      "models": [
+        { "id": "gpt-4o", "name": "GPT-4o", "type": "text" },
+        { "id": "gpt-4o-mini", "name": "GPT-4o Mini", "type": "text" }
+      ]
+    },
+    "anthropic": {
+      "name": "Anthropic (Claude)",
+      "baseUrl": "https://api.anthropic.com/v1",
+      "authType": "custom-header",
+      "authHeader": "x-api-key",
+      "billingType": "both",
+      "apiFormat": "anthropic",
+      "loginUrl": "https://console.anthropic.com/settings/keys",
+      "docsUrl": "https://docs.anthropic.com",
+      "subscriptionUrl": "https://console.anthropic.com/settings/billing",
+      "accessModes": ["apikey", "oauth"],
+      "models": [
+        { "id": "claude-opus-4-6", "name": "Claude Opus 4.6", "type": "text" },
+        { "id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6", "type": "text" },
+        { "id": "claude-haiku-4-5", "name": "Claude Haiku 4.5", "type": "text" }
+      ]
+    },
+    "google": {
+      "name": "Google Gemini",
+      "baseUrl": "https://generativelanguage.googleapis.com/v1beta",
+      "authType": "query-key",
+      "queryParam": "key",
+      "billingType": "both",
+      "apiFormat": "google",
+      "loginUrl": "https://aistudio.google.com/app/apikey",
+      "docsUrl": "https://ai.google.dev/docs",
+      "subscriptionUrl": "https://aistudio.google.com/app/plan",
+      "accessModes": ["apikey", "oauth"],
+      "models": [
+        { "id": "gemini-2.5-pro-preview-06-05", "name": "Gemini 2.5 Pro", "type": "text" },
+        { "id": "gemini-2.5-flash-preview-04-17", "name": "Gemini 2.5 Flash", "type": "text" },
+        { "id": "imagen-3.0-generate-002", "name": "Imagen 3.0", "type": "image" },
+        { "id": "veo-3.0-generate-preview", "name": "Veo 3.0 Preview", "type": "video" }
+      ]
+    },
+    "baidu": {
+      "name": "百度文心 (ERNIE)",
+      "baseUrl": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat",
+      "authType": "query-token",
+      "authEnvVars": ["AK", "SK"],
+      "tokenUrl": "https://aip.baidubce.com/oauth/2.0/token",
+      "billingType": "both",
+      "apiFormat": "baidu",
+      "loginUrl": "https://console.bce.baidu.com/qianfan/ais/console/applicationConsole/application",
+      "docsUrl": "https://cloud.baidu.com/doc/WENXINWORKSHOP/index.html",
+      "subscriptionUrl": "https://console.bce.baidu.com/billing/#/account/index",
+      "accessModes": ["apikey", "oauth"],
+      "models": [
+        { "id": "ernie-4.5-turbo-128k-preview", "name": "ERNIE 4.5 Turbo 128K", "type": "text" },
+        { "id": "ernie-4.0-8k", "name": "ERNIE 4.0 8K", "type": "text" }
+      ]
+    },
+    "moonshot": {
+      "name": "月之暗面 (Kimi/Moonshot)",
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.moonshot.cn/console/api-keys",
+      "docsUrl": "https://platform.moonshot.cn/docs",
+      "subscriptionUrl": "https://platform.moonshot.cn/console/account",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "kimi-latest", "name": "Kimi Latest", "type": "text" },
+        { "id": "kimi-k2.5", "name": "Kimi K2.5", "type": "text" },
+        { "id": "kimi-k2.5-vision", "name": "Kimi K2.5 Vision", "type": "text" }
+      ]
+    },
+    "kimi_coding": {
+      "name": "Kimi Coding Plan",
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "coding-plan",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.moonshot.cn/console/account",
+      "docsUrl": "https://platform.moonshot.cn/docs",
+      "subscriptionUrl": "https://platform.moonshot.cn/console/account",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "kimi-latest", "name": "Kimi Latest (Coding)", "type": "text" },
+        { "id": "kimi-k2.5", "name": "Kimi K2.5 (Coding)", "type": "text" }
+      ]
+    },
+    "zhipu": {
+      "name": "智谱AI (Zhipu)",
+      "baseUrl": "https://open.bigmodel.cn/api/paas/v4",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://open.bigmodel.cn/usercenter/apikeys",
+      "docsUrl": "https://open.bigmodel.cn/dev/api",
+      "subscriptionUrl": "https://open.bigmodel.cn/pricing",
+      "codingPlanUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "glm-5", "name": "GLM-5", "type": "text" },
+        { "id": "glm-5-turbo", "name": "GLM-5 Turbo", "type": "text" },
+        { "id": "glm-image", "name": "GLM-Image", "type": "image" }
+      ]
+    },
+    "qwen": {
+      "name": "通义千问 (Qwen) / 阿里云百炼",
+      "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "baseUrlIntl": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "authEnvVar": "DASHSCOPE_API_KEY",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://dashscope.console.aliyun.com/apiKey",
+      "docsUrl": "https://help.aliyun.com/zh/dashscope/",
+      "subscriptionUrl": "https://dashscope.console.aliyun.com/billing",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "qwen3.6-plus", "name": "Qwen3.6 Plus", "type": "text" },
+        { "id": "qwen-max", "name": "Qwen Max", "type": "text" },
+        { "id": "wanx2.1-t2i-plus", "name": "Wanx 2.1 T2I Plus", "type": "image" }
+      ]
+    },
+    "doubao": {
+      "name": "豆包 (ByteDance/火山方舟)",
+      "baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey",
+      "docsUrl": "https://www.volcengine.com/docs/82379",
+      "subscriptionUrl": "https://console.volcengine.com/finance/unifiedBilling/detail",
+      "codingPlanUrl": "https://console.volcengine.com/ark/region:ark+cn-beijing/codingPlan",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "doubao-1.5-pro", "name": "Doubao 1.5 Pro", "type": "text" },
+        { "id": "doubao-1.5-lite", "name": "Doubao 1.5 Lite", "type": "text" },
+        { "id": "seedream", "name": "Seedream", "type": "image" }
+      ]
+    },
+    "deepseek": {
+      "name": "DeepSeek",
+      "baseUrl": "https://api.deepseek.com",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.deepseek.com/api_keys",
+      "docsUrl": "https://platform.deepseek.com/api-docs",
+      "subscriptionUrl": "https://platform.deepseek.com/top_up",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "deepseek-chat", "name": "DeepSeek-V3", "type": "text" },
+        { "id": "deepseek-reasoner", "name": "DeepSeek-R1", "type": "text" }
+      ]
+    },
+    "minimax": {
+      "name": "MiniMax",
+      "baseUrl": "https://api.minimax.chat/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.minimaxi.com/user-center/basic-information/interface-key",
+      "docsUrl": "https://platform.minimaxi.com/document/Announcement",
+      "subscriptionUrl": "https://platform.minimaxi.com/user-center/basic-information",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "MiniMax-Text-01", "name": "MiniMax Text 01", "type": "text" },
+        { "id": "Hailuo-02", "name": "Hailuo Video", "type": "video" }
+      ]
+    },
+    "siliconflow": {
+      "name": "SiliconFlow",
+      "baseUrl": "https://api.siliconflow.cn/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://cloud.siliconflow.cn/account/ak",
+      "docsUrl": "https://docs.siliconflow.cn",
+      "subscriptionUrl": "https://cloud.siliconflow.cn/account/charge",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "deepseek-v3", "name": "DeepSeek V3", "type": "text" },
+        { "id": "deepseek-r1", "name": "DeepSeek R1", "type": "text" }
+      ]
+    },
+    "stepfun": {
+      "name": "StepFun",
+      "baseUrl": "https://api.stepfun.com/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.stepfun.com/interface-key",
+      "docsUrl": "https://platform.stepfun.com/docs",
+      "subscriptionUrl": "https://platform.stepfun.com/account-management",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "step-2", "name": "Step-2", "type": "text" },
+        { "id": "step-1v", "name": "Step-1V", "type": "text" }
+      ]
+    },
+    "mistral": {
+      "name": "Mistral AI",
+      "baseUrl": "https://api.mistral.ai/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://console.mistral.ai/api-keys",
+      "docsUrl": "https://docs.mistral.ai",
+      "subscriptionUrl": "https://console.mistral.ai/billing",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "mistral-large-latest", "name": "Mistral Large", "type": "text" },
+        { "id": "codestral-latest", "name": "Codestral", "type": "text" }
+      ]
+    },
+    "xai": {
+      "name": "xAI (Grok)",
+      "baseUrl": "https://api.x.ai/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://accounts.x.ai",
+      "docsUrl": "https://docs.x.ai",
+      "subscriptionUrl": "https://accounts.x.ai",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "grok-4.20", "name": "Grok 4.20", "type": "text" },
+        { "id": "grok-3-mini", "name": "Grok 3 Mini", "type": "text" }
+      ]
+    },
+    "cohere": {
+      "name": "Cohere",
+      "baseUrl": "https://api.cohere.ai/compatibility/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://dashboard.cohere.com/api-keys",
+      "docsUrl": "https://docs.cohere.com/docs/compatibility-api",
+      "subscriptionUrl": "https://dashboard.cohere.com",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "command-a-03-2025", "name": "Command A", "type": "text" },
+        { "id": "command-r-plus", "name": "Command R+", "type": "text" },
+        { "id": "embed-v4.0", "name": "Embed v4.0", "type": "text" }
+      ]
+    },
+    "groq": {
+      "name": "Groq",
+      "baseUrl": "https://api.groq.com/openai/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://console.groq.com/keys",
+      "docsUrl": "https://console.groq.com/docs/openai",
+      "subscriptionUrl": "https://console.groq.com",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "openai/gpt-oss-120b", "name": "GPT-OSS 120B", "type": "text" },
+        { "id": "llama-3.3-70b-versatile", "name": "Llama 3.3 70B Versatile", "type": "text" }
+      ]
+    },
+    "perplexity": {
+      "name": "Perplexity",
+      "baseUrl": "https://api.perplexity.ai/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://www.perplexity.ai/settings/api",
+      "docsUrl": "https://docs.perplexity.ai/docs/agent-api/openai-compatibility",
+      "subscriptionUrl": "https://www.perplexity.ai/settings/api",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "sonar", "name": "Sonar", "type": "text" },
+        { "id": "sonar-pro", "name": "Sonar Pro", "type": "text" },
+        { "id": "sonar-reasoning", "name": "Sonar Reasoning", "type": "text" }
+      ]
+    },
+    "openrouter": {
+      "name": "OpenRouter",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://openrouter.ai/settings/keys",
+      "docsUrl": "https://openrouter.ai/docs/quickstart",
+      "subscriptionUrl": "https://openrouter.ai/settings/credits",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "openai/gpt-4o", "name": "OpenAI GPT-4o", "type": "text" },
+        { "id": "anthropic/claude-sonnet-4", "name": "Claude Sonnet 4", "type": "text" },
+        { "id": "google/gemini-2.5-pro", "name": "Gemini 2.5 Pro", "type": "text" }
+      ]
+    },
+    "together": {
+      "name": "Together AI",
+      "baseUrl": "https://api.together.xyz/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://api.together.ai/settings/api-keys",
+      "docsUrl": "https://docs.together.ai/docs/openai-api-compatibility",
+      "subscriptionUrl": "https://api.together.ai/settings/billing",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8", "name": "Llama 4 Maverick", "type": "text" },
+        { "id": "deepseek-ai/DeepSeek-V3", "name": "DeepSeek V3", "type": "text" }
+      ]
+    },
+    "fireworks": {
+      "name": "Fireworks AI",
+      "baseUrl": "https://api.fireworks.ai/inference/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://app.fireworks.ai/api-keys",
+      "docsUrl": "https://docs.fireworks.ai/tools-sdks/openai-compatibility",
+      "subscriptionUrl": "https://app.fireworks.ai",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "accounts/fireworks/models/llama-v3p1-70b-instruct", "name": "Llama 70B Instruct", "type": "text" },
+        { "id": "accounts/fireworks/models/deepseek-v3", "name": "DeepSeek V3", "type": "text" }
+      ]
+    },
+    "tencent_hunyuan": {
+      "name": "腾讯混元",
+      "baseUrl": "https://api.hunyuan.cloud.tencent.com/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://console.cloud.tencent.com/hunyuan/api-key",
+      "docsUrl": "https://cloud.tencent.com/document/product/1729/111007",
+      "subscriptionUrl": "https://console.cloud.tencent.com/expense",
+      "accessModes": ["apikey"],
+      "models": [
+        { "id": "hunyuan-turbos-latest", "name": "HunYuan Turbos Latest", "type": "text" },
+        { "id": "hunyuan-t1-latest", "name": "HunYuan T1 Latest", "type": "text" },
+        { "id": "hunyuan-vision", "name": "HunYuan Vision", "type": "text" }
+      ]
+    }
+  },
+  "providerSummaries": [
+    { "id": "openai", "name": "OpenAI", "authModes": ["apikey", "oauth"], "billingType": "both" },
+    { "id": "openai_codex", "name": "OpenAI Codex", "authModes": ["oauth"], "billingType": "subscription" },
+    { "id": "github_copilot", "name": "GitHub Copilot", "authModes": ["token"], "billingType": "subscription" },
+    { "id": "anthropic", "name": "Anthropic", "authModes": ["apikey", "oauth"], "billingType": "both" },
+    { "id": "google", "name": "Google Gemini", "authModes": ["apikey", "oauth"], "billingType": "both" },
+    { "id": "baidu", "name": "百度文心", "authModes": ["apikey", "oauth", "query-token"], "billingType": "both" },
+    { "id": "moonshot", "name": "Moonshot", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "kimi_coding", "name": "Kimi Coding Plan", "authModes": ["apikey"], "billingType": "coding-plan" },
+    { "id": "zhipu", "name": "智谱AI", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "qwen", "name": "通义千问", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "doubao", "name": "豆包", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "deepseek", "name": "DeepSeek", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "minimax", "name": "MiniMax", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "siliconflow", "name": "SiliconFlow", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "stepfun", "name": "StepFun", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "mistral", "name": "Mistral", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "xai", "name": "xAI", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "cohere", "name": "Cohere", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "groq", "name": "Groq", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "perplexity", "name": "Perplexity", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "openrouter", "name": "OpenRouter", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "together", "name": "Together AI", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "fireworks", "name": "Fireworks AI", "authModes": ["apikey"], "billingType": "apikey" },
+    { "id": "tencent_hunyuan", "name": "腾讯混元", "authModes": ["apikey"], "billingType": "apikey" }
+  ],
+  "authProfiles": {
+    "openai:apikey": {
+      "providerId": "openai",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${OPENAI_API_KEY}",
+      "billingMode": "payg"
+    },
+    "openai:oauth": {
+      "providerId": "openai",
+      "authMode": "oauth",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${OPENAI_OAUTH_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "subscription"
+    },
+    "openai_codex:oauth": {
+      "providerId": "openai_codex",
+      "authMode": "oauth",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${OPENAI_CODEX_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "coding-plan"
+    },
+    "github_copilot:token": {
+      "providerId": "github_copilot",
+      "authMode": "token",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${GITHUB_COPILOT_TOKEN}",
+      "billingMode": "subscription"
+    },
+    "anthropic:apikey": {
+      "providerId": "anthropic",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "x-api-key",
+      "headerFormat": "${ANTHROPIC_API_KEY}",
+      "extraHeaders": {
+        "anthropic-version": "2023-06-01"
+      },
+      "billingMode": "payg"
+    },
+    "anthropic:oauth": {
+      "providerId": "anthropic",
+      "authMode": "oauth",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${ANTHROPIC_OAUTH_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "subscription"
+    },
+    "google:apikey": {
+      "providerId": "google",
+      "authMode": "apikey",
+      "credentialLocation": "query",
+      "queryParam": "key",
+      "queryFormat": "${GOOGLE_API_KEY}",
+      "billingMode": "payg"
+    },
+    "google:oauth": {
+      "providerId": "google",
+      "authMode": "oauth",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${GOOGLE_OAUTH_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "subscription"
+    },
+    "baidu:aksk-token": {
+      "providerId": "baidu",
+      "authMode": "query-token",
+      "tokenSource": "oauth2_client_credentials",
+      "tokenUrl": "https://aip.baidubce.com/oauth/2.0/token",
+      "tokenRequest": {
+        "grant_type": "client_credentials",
+        "client_id": "${BAIDU_AK}",
+        "client_secret": "${BAIDU_SK}"
+      },
+      "credentialLocation": "query",
+      "queryParam": "access_token",
+      "billingMode": "payg"
+    },
+    "baidu:oauth": {
+      "providerId": "baidu",
+      "authMode": "oauth",
+      "credentialLocation": "query",
+      "queryParam": "access_token",
+      "queryFormat": "${BAIDU_OAUTH_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "subscription"
+    },
+    "moonshot:apikey": {
+      "providerId": "moonshot",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${MOONSHOT_API_KEY}",
+      "billingMode": "payg"
+    },
+    "moonshot:coding-plan-apikey": {
+      "providerId": "kimi_coding",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${MOONSHOT_CODING_PLAN_KEY}",
+      "billingMode": "coding-plan"
+    },
+    "zhipu:apikey": {
+      "providerId": "zhipu",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${ZHIPU_API_KEY}",
+      "billingMode": "payg"
+    },
+    "zhipu:coding-plan-apikey": {
+      "providerId": "zhipu",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${ZHIPU_CODING_PLAN_KEY}",
+      "billingMode": "coding-plan"
+    },
+    "qwen:apikey": {
+      "providerId": "qwen",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${DASHSCOPE_API_KEY}",
+      "billingMode": "payg"
+    },
+    "doubao:apikey": {
+      "providerId": "doubao",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${DOUBAO_API_KEY}",
+      "billingMode": "payg"
+    },
+    "doubao:coding-plan-apikey": {
+      "providerId": "doubao",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${DOUBAO_CODING_PLAN_KEY}",
+      "billingMode": "coding-plan"
+    },
+    "deepseek:apikey": {
+      "providerId": "deepseek",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${DEEPSEEK_API_KEY}",
+      "billingMode": "payg"
+    },
+    "minimax:apikey": {
+      "providerId": "minimax",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${MINIMAX_API_KEY}",
+      "billingMode": "payg"
+    },
+    "siliconflow:apikey": {
+      "providerId": "siliconflow",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${SILICONFLOW_API_KEY}",
+      "billingMode": "payg"
+    },
+    "stepfun:apikey": {
+      "providerId": "stepfun",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${STEPFUN_API_KEY}",
+      "billingMode": "payg"
+    },
+    "mistral:apikey": {
+      "providerId": "mistral",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${MISTRAL_API_KEY}",
+      "billingMode": "payg"
+    },
+    "xai:apikey": {
+      "providerId": "xai",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${XAI_API_KEY}",
+      "billingMode": "payg"
+    },
+    "cohere:apikey": {
+      "providerId": "cohere",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${COHERE_API_KEY}",
+      "billingMode": "payg"
+    },
+    "groq:apikey": {
+      "providerId": "groq",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${GROQ_API_KEY}",
+      "billingMode": "payg"
+    },
+    "perplexity:apikey": {
+      "providerId": "perplexity",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${PERPLEXITY_API_KEY}",
+      "billingMode": "payg"
+    },
+    "openrouter:apikey": {
+      "providerId": "openrouter",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${OPENROUTER_API_KEY}",
+      "billingMode": "payg"
+    },
+    "together:apikey": {
+      "providerId": "together",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${TOGETHER_API_KEY}",
+      "billingMode": "payg"
+    },
+    "fireworks:apikey": {
+      "providerId": "fireworks",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${FIREWORKS_API_KEY}",
+      "billingMode": "payg"
+    },
+    "tencent_hunyuan:apikey": {
+      "providerId": "tencent_hunyuan",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${TENCENT_HUNYUAN_API_KEY}",
+      "billingMode": "payg"
+    }
+  },
+  "yourConfiguredProviders": {
+    "openai:default": {
+      "providerId": "openai",
+      "profileId": "openai:default",
+      "authProfileRef": "openai:apikey",
+      "authType": "apikey",
+      "description": "OpenAI 默认 API Key"
+    },
+    "openai:oauth-default": {
+      "providerId": "openai",
+      "profileId": "openai:oauth-default",
+      "authProfileRef": "openai:oauth",
+      "authType": "oauth",
+      "description": "OpenAI OAuth 订阅版"
+    },
+    "openai_codex:default": {
+      "providerId": "openai_codex",
+      "profileId": "openai_codex:default",
+      "authProfileRef": "openai_codex:oauth",
+      "authType": "oauth",
+      "description": "OpenAI Codex Coding Plan"
+    },
+    "github_copilot:default": {
+      "providerId": "github_copilot",
+      "profileId": "github_copilot:default",
+      "authProfileRef": "github_copilot:token",
+      "authType": "token",
+      "description": "GitHub Copilot 订阅令牌"
+    },
+    "google:oauth-default": {
+      "providerId": "google",
+      "profileId": "google:oauth-default",
+      "authProfileRef": "google:oauth",
+      "authType": "oauth",
+      "description": "Google Gemini OAuth"
+    },
+    "anthropic:oauth-default": {
+      "providerId": "anthropic",
+      "profileId": "anthropic:oauth-default",
+      "authProfileRef": "anthropic:oauth",
+      "authType": "oauth",
+      "description": "Anthropic Claude OAuth"
+    },
+    "baidu:oauth-default": {
+      "providerId": "baidu",
+      "profileId": "baidu:oauth-default",
+      "authProfileRef": "baidu:oauth",
+      "authType": "oauth",
+      "description": "百度文心 OAuth"
+    },
+    "moonshot:coding-default": {
+      "providerId": "kimi_coding",
+      "profileId": "moonshot:coding-default",
+      "authProfileRef": "moonshot:coding-plan-apikey",
+      "authType": "apikey",
+      "description": "Kimi Coding Plan"
+    }
+  }
+}

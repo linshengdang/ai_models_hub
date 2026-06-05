@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cursor 订阅验证</title>
+    <style>
+      :root {
+        --bg: #f5f7fb; --card: #ffffff; --text: #18212f; --muted: #5b6574;
+        --border: #dbe2ea; --primary: #18181b; --success: #147d45;
+        --success-bg: #edf9f1; --error: #b42318; --error-bg: #fff0ee;
+        --info: #1d4ed8; --info-bg: #eef4ff;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif; background: linear-gradient(180deg, #f8f8fa 0%, #ececf0 100%); color: var(--text); }
+      .page { max-width: 880px; margin: 0 auto; padding: 32px 20px 40px; }
+      .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08); overflow: hidden; }
+      .hero { padding: 28px 28px 22px; border-bottom: 1px solid var(--border); }
+      .hero h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.2; }
+      .hero p { margin: 0; color: var(--muted); line-height: 1.6; }
+      .content { padding: 24px 28px 28px; display: grid; gap: 16px; }
+      .panel { border: 1px solid var(--border); border-radius: 16px; padding: 18px; background: #fff; }
+      .panel h2 { margin: 0 0 10px; font-size: 17px; }
+      .status { border-radius: 14px; padding: 14px 16px; line-height: 1.6; font-size: 14px; }
+      .status.info { background: var(--info-bg); color: var(--info); }
+      .status.success { background: var(--success-bg); color: var(--success); }
+      .status.error { background: var(--error-bg); color: var(--error); }
+      .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+      .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--border); background: #fff; color: var(--text); text-decoration: none; cursor: pointer; font-size: 14px; font-weight: 600; }
+      .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+      .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+      .hint { color: var(--muted); font-size: 13px; line-height: 1.6; }
+      .meta { display: grid; gap: 10px; color: var(--muted); line-height: 1.6; }
+      .meta strong { color: var(--text); }
+      .hidden { display: none; }
+      @media (max-width: 640px) { .page { padding: 16px 12px 24px; } .hero, .content { padding-left: 16px; padding-right: 16px; } }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="card">
+        <div class="hero">
+          <h1>Cursor 订阅验证</h1>
+          <p>使用 Cursor 订阅账号登录。点击开始后会自动打开 Cursor 登录页，登录成功后自动完成验证。</p>
+        </div>
+        <div class="content">
+          <div id="status" class="status info">准备开始 Cursor 授权...</div>
+
+          <div class="panel">
+            <h2>登录验证</h2>
+            <div class="actions">
+              <button id="start-btn" class="btn primary" type="button">开始 Cursor 登录</button>
+              <a id="auth-link" class="btn hidden" href="#" onclick="window.open(this.href, '_blank'); return false;" rel="noreferrer">打开 Cursor 登录页</a>
+            </div>
+            <div class="hint" style="margin-top: 10px;">
+              点击按钮后会生成登录链接并跳转到 Cursor 登录页。登录成功后系统会自动轮询完成验证。
+            </div>
+          </div>
+
+          <div id="result-panel" class="panel hidden">
+            <h2>验证结果</h2>
+            <div id="result-meta" class="meta"></div>
+            <div class="actions" style="margin-top: 12px;">
+              <button id="close-btn" class="btn primary" type="button">关闭窗口</button>
+              <a class="btn" href="/">返回主页面</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const providerId = 'cursor';
+      const statusEl = document.getElementById('status');
+      const startBtn = document.getElementById('start-btn');
+      const authLink = document.getElementById('auth-link');
+      const resultPanel = document.getElementById('result-panel');
+      const resultMeta = document.getElementById('result-meta');
+      const closeBtn = document.getElementById('close-btn');
+
+      let polling = false;
+      let authCompleted = false;
+      let statusPollTimer = null;
+
+      function setStatus(type, msg) { statusEl.className = `status ${type}`; statusEl.textContent = msg; }
+      function setHidden(el, hidden) { el.classList.toggle('hidden', hidden); }
+
+      function postBack(type, message) {
+        try { localStorage.setItem('provider-oauth-result', JSON.stringify({ type, providerId, message, ts: Date.now() })); } catch {}
+        if (window.opener && !window.opener.closed) { window.opener.postMessage({ type, providerId, message }, window.location.origin); }
+      }
+
+      async function fetchJson(url, options, timeoutMs = 20000) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const res = await fetch(url, { ...(options || {}), signal: controller.signal });
+          const data = await res.json().catch(() => ({}));
+          return { ok: res.ok, data };
+        } finally { clearTimeout(timer); }
+      }
+
+      async function pollDeviceFlow(uuid) {
+        const maxAttempts = 150;
+        let attempts = 0;
+        let delay = 2000;
+
+        while (attempts < maxAttempts && polling) {
+          attempts++;
+          setStatus('info', `等待 Cursor 登录完成... (第 ${attempts} 次轮询)`);
+
+          try {
+            const result = await fetchJson('/api/auth/cursor/device/poll', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ uuid }),
+            });
+
+            if (result.data?.success) {
+              polling = false;
+              authCompleted = true;
+              stopStatusPolling();
+              setHidden(resultPanel, false);
+              resultMeta.innerHTML = '<div><strong>结果：</strong>Cursor 订阅验证成功！</div>';
+              setStatus('success', 'Cursor 订阅验证成功！');
+              postBack('provider-oauth-success', 'Cursor 订阅验证成功。');
+              return;
+            }
+
+            if (result.data?.status === 'authorization_pending' || result.data?.status === 'request_timeout') {
+              // Keep polling
+            } else if (result.data?.error) {
+              polling = false;
+              setStatus('error', result.data.error);
+              postBack('provider-oauth-error', `Cursor 验证失败：${result.data.error}`);
+              return;
+            }
+          } catch (e) {
+            // Network error, continue polling
+          }
+
+          await new Promise(r => setTimeout(r, delay));
+          delay = Math.min(delay * 1.1, 5000);
+        }
+
+        if (polling) {
+          polling = false;
+          setStatus('error', '轮询超时，请重试。');
+        }
+      }
+
+      async function startFlow() {
+        startBtn.disabled = true;
+        setStatus('info', '正在启动 Cursor 登录...');
+        try {
+          const result = await fetchJson('/api/auth/cursor/device/start', { method: 'POST' });
+          if (!result.ok || !result.data?.verification_uri) {
+            throw new Error(result.data?.error || '启动 Cursor 登录失败');
+          }
+
+          const loginUrl = result.data.verification_uri;
+          authLink.href = loginUrl;
+          setHidden(authLink, false);
+          setStatus('info', '已打开 Cursor 登录页，请在浏览器中完成登录...');
+
+          // Auto-open login page
+          window.open(loginUrl, '_blank');
+
+          // Start polling
+          polling = true;
+          pollDeviceFlow(result.data.uuid);
+        } catch (e) {
+          setStatus('error', e.message || '启动失败');
+          startBtn.disabled = false;
+        }
+      }
+
+      function startStatusPolling() {
+        if (statusPollTimer) return;
+        statusPollTimer = setInterval(async () => {
+          if (authCompleted) { stopStatusPolling(); return; }
+          try {
+            const res = await fetch('/api/auth/status/cursor');
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.authenticated && !data.expired) {
+              stopStatusPolling();
+              if (authCompleted) return;
+              authCompleted = true;
+              polling = false;
+              setHidden(resultPanel, false);
+              resultMeta.innerHTML = '<div><strong>结果：</strong>Cursor 订阅验证成功！</div>';
+              setStatus('success', 'Cursor 订阅验证成功！');
+              postBack('provider-oauth-success', 'Cursor 订阅验证成功。');
+            }
+          } catch {}
+        }, 5000);
+      }
+
+      function stopStatusPolling() {
+        if (statusPollTimer) { clearInterval(statusPollTimer); statusPollTimer = null; }
+      }
+
+      async function init() {
+        try {
+          const res = await fetch('/api/auth/status/cursor');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.authenticated && !data.expired) {
+              authCompleted = true;
+              setHidden(resultPanel, false);
+              resultMeta.innerHTML = '<div><strong>结果：</strong>Cursor 订阅验证成功！</div>';
+              setStatus('success', 'Cursor 订阅验证成功！');
+              postBack('provider-oauth-success', 'Cursor 订阅验证成功。');
+              return;
+            }
+          }
+        } catch {}
+        setStatus('info', '准备开始 Cursor 授权...');
+        startStatusPolling();
+      }
+
+      startBtn.addEventListener('click', startFlow);
+      closeBtn.addEventListener('click', () => window.close());
+      window.addEventListener('beforeunload', () => stopStatusPolling());
+
+      init();
+    </script>
+  </body>
+</html>

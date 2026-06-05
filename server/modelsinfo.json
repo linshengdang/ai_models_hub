@@ -1,0 +1,3335 @@
+{
+  "_comment": "大模型供应商完整接入配置 — 综合参考文档",
+  "_lastUpdated": "2026-04-02",
+  "_formats": {
+    "providerConfigs": "供应商定义 + 完整模型列表",
+    "providerSummaries": "供应商简表",
+    "authProfiles": "认证方式定义",
+    "yourConfiguredProviders": "当前实际启用的认证实例"
+  },
+  "providerConfigs": {
+    "openai": {
+      "name": "OpenAI",
+      "baseUrl": "https://api.openai.com/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "both",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.openai.com/api-keys",
+      "docsUrl": "https://platform.openai.com/docs",
+      "subscriptionUrl": "https://platform.openai.com/settings/organization/billing/overview",
+      "accessModes": [
+        "apikey",
+        "oauth"
+      ],
+      "models": [
+        {
+          "id": "gpt-5.4",
+          "name": "GPT-5.4",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-5.4-mini",
+          "name": "GPT-5.4 Mini",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-5.4-nano",
+          "name": "GPT-5.4 Nano",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-4.1",
+          "name": "GPT-4.1",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "gpt-4.1-mini",
+          "name": "GPT-4.1 Mini",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "gpt-4.1-nano",
+          "name": "GPT-4.1 Nano",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "gpt-4o",
+          "name": "GPT-4o",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-4o-mini",
+          "name": "GPT-4o Mini",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "o4-mini",
+          "name": "o4 Mini",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "o3",
+          "name": "o3",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning",
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "o3-mini",
+          "name": "o3 Mini",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "o1",
+          "name": "o1",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning",
+            "vision"
+          ]
+        },
+        {
+          "id": "o1-mini",
+          "name": "o1 Mini",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "gpt-image-1.5",
+          "name": "GPT Image 1.5",
+          "type": "image",
+          "tags": [
+            "generation",
+            "editing"
+          ]
+        },
+        {
+          "id": "gpt-image-1",
+          "name": "GPT Image 1",
+          "type": "image",
+          "tags": [
+            "generation",
+            "editing"
+          ]
+        },
+        {
+          "id": "gpt-image-1-mini",
+          "name": "GPT Image 1 Mini",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "dall-e-3",
+          "name": "DALL-E 3",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "sora",
+          "name": "Sora",
+          "type": "video",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "gpt-realtime-1.5",
+          "name": "GPT Realtime 1.5",
+          "type": "audio",
+          "tags": [
+            "stt",
+            "tts"
+          ]
+        },
+        {
+          "id": "gpt-realtime-mini",
+          "name": "GPT Realtime Mini",
+          "type": "audio",
+          "tags": [
+            "stt",
+            "tts"
+          ]
+        },
+        {
+          "id": "gpt-4o-mini-tts",
+          "name": "GPT-4o Mini TTS",
+          "type": "audio",
+          "tags": [
+            "tts"
+          ]
+        },
+        {
+          "id": "tts-1",
+          "name": "TTS-1",
+          "type": "audio",
+          "tags": [
+            "tts"
+          ]
+        },
+        {
+          "id": "tts-1-hd",
+          "name": "TTS-1 HD",
+          "type": "audio",
+          "tags": [
+            "tts"
+          ]
+        },
+        {
+          "id": "whisper-1",
+          "name": "Whisper-1",
+          "type": "audio",
+          "tags": [
+            "stt"
+          ]
+        },
+        {
+          "id": "gpt-4o-transcribe",
+          "name": "GPT-4o Transcribe",
+          "type": "audio",
+          "tags": [
+            "stt"
+          ]
+        },
+        {
+          "id": "gpt-4o-mini-transcribe",
+          "name": "GPT-4o Mini Transcribe",
+          "type": "audio",
+          "tags": [
+            "stt"
+          ]
+        },
+        {
+          "id": "text-embedding-3-large",
+          "name": "Embedding 3 Large",
+          "type": "embedding",
+          "ctx": 8191
+        },
+        {
+          "id": "text-embedding-3-small",
+          "name": "Embedding 3 Small",
+          "type": "embedding",
+          "ctx": 8191
+        }
+      ]
+    },
+    "openai_codex": {
+      "name": "OpenAI Codex (Coding Plan)",
+      "baseUrl": "https://api.openai.com/v1",
+      "authType": "oauth",
+      "authHeader": "Authorization",
+      "billingType": "subscription",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.openai.com/settings/organization/billing/overview",
+      "docsUrl": "https://platform.openai.com/docs",
+      "subscriptionUrl": "https://platform.openai.com/settings/organization/billing/overview",
+      "accessModes": [
+        "oauth"
+      ],
+      "note": "ChatGPT Plus/Pro 订阅用户通过 OAuth 获取 access_token",
+      "models": [
+        {
+          "id": "gpt-5.4",
+          "name": "GPT-5.4",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-5.4-mini",
+          "name": "GPT-5.4 Mini",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-4.1",
+          "name": "GPT-4.1",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-4.1-mini",
+          "name": "GPT-4.1 Mini",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-4o",
+          "name": "GPT-4o",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "o4-mini",
+          "name": "o4 Mini",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "o3",
+          "name": "o3",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning",
+            "vision"
+          ]
+        },
+        {
+          "id": "o3-mini",
+          "name": "o3 Mini",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning"
+          ]
+        }
+      ]
+    },
+    "github_copilot": {
+      "name": "GitHub Copilot",
+      "baseUrl": "https://api.githubcopilot.com/chat/completions",
+      "authType": "token",
+      "authHeader": "Authorization",
+      "tokenType": "Bearer",
+      "billingType": "subscription",
+      "apiFormat": "openai",
+      "loginUrl": "https://github.com/features/copilot",
+      "docsUrl": "https://docs.github.com/en/copilot",
+      "subscriptionUrl": "https://github.com/settings/copilot",
+      "accessModes": [
+        "token"
+      ],
+      "note": "GitHub Copilot 订阅，支持多模型路由",
+      "models": [
+        {
+          "id": "gpt-5.4",
+          "name": "GPT-5.4",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "gpt-5.4-mini",
+          "name": "GPT-5.4 Mini",
+          "type": "text",
+          "ctx": 128000
+        },
+        {
+          "id": "gpt-5.3-codex",
+          "name": "GPT-5.3 Codex",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "gpt-5.2",
+          "name": "GPT-5.2",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "gpt-5.2-codex",
+          "name": "GPT-5.2 Codex",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "gpt-5.1",
+          "name": "GPT-5.1",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "gpt-5.1-codex",
+          "name": "GPT-5.1 Codex",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "gpt-5.1-codex-max",
+          "name": "GPT-5.1 Codex Max",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "gpt-5.1-codex-mini",
+          "name": "GPT-5.1 Codex Mini",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "gpt-5-mini",
+          "name": "GPT-5 Mini",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "gpt-4.1",
+          "name": "GPT-4.1",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-4o",
+          "name": "GPT-4o",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "gpt-4o-mini",
+          "name": "GPT-4o Mini",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "o3-mini",
+          "name": "o3 Mini",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "o4-mini",
+          "name": "o4 Mini",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "claude-opus-4.6",
+          "name": "Claude Opus 4.6",
+          "type": "text",
+          "ctx": 1000000,
+          "tags": [
+            "reasoning",
+            "extended_thinking"
+          ]
+        },
+        {
+          "id": "claude-opus-4.5",
+          "name": "Claude Opus 4.5",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "claude-sonnet-4.6",
+          "name": "Claude Sonnet 4.6",
+          "type": "text",
+          "ctx": 1000000,
+          "tags": [
+            "reasoning",
+            "extended_thinking"
+          ]
+        },
+        {
+          "id": "claude-sonnet-4.5",
+          "name": "Claude Sonnet 4.5",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "claude-sonnet-4",
+          "name": "Claude Sonnet 4",
+          "type": "text",
+          "ctx": 200000
+        },
+        {
+          "id": "claude-haiku-4.5",
+          "name": "Claude Haiku 4.5",
+          "type": "text",
+          "ctx": 200000
+        },
+        {
+          "id": "gemini-3.1-pro",
+          "name": "Gemini 3.1 Pro",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "reasoning",
+            "vision"
+          ]
+        },
+        {
+          "id": "gemini-3-pro",
+          "name": "Gemini 3 Pro",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "reasoning",
+            "vision"
+          ]
+        },
+        {
+          "id": "gemini-3-flash",
+          "name": "Gemini 3 Flash",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "gemini-2.5-pro",
+          "name": "Gemini 2.5 Pro",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "reasoning",
+            "vision"
+          ]
+        },
+        {
+          "id": "grok-code-fast-1",
+          "name": "Grok Code Fast 1",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "qwen-2.5",
+          "name": "Qwen 2.5",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "coding"
+          ]
+        }
+      ]
+    },
+    "anthropic": {
+      "name": "Anthropic (Claude)",
+      "baseUrl": "https://api.anthropic.com/v1",
+      "authType": "custom-header",
+      "authHeader": "x-api-key",
+      "extraHeaders": {
+        "anthropic-version": "2023-06-01"
+      },
+      "billingType": "both",
+      "apiFormat": "anthropic",
+      "loginUrl": "https://console.anthropic.com/settings/keys",
+      "docsUrl": "https://docs.anthropic.com",
+      "subscriptionUrl": "https://console.anthropic.com/settings/billing",
+      "accessModes": [
+        "apikey",
+        "oauth"
+      ],
+      "models": [
+        {
+          "id": "claude-opus-4-6",
+          "name": "Claude Opus 4.6",
+          "type": "text",
+          "ctx": 1000000,
+          "tags": [
+            "vision",
+            "function_calling",
+            "computer_use",
+            "extended_thinking"
+          ]
+        },
+        {
+          "id": "claude-sonnet-4-6",
+          "name": "Claude Sonnet 4.6",
+          "type": "text",
+          "ctx": 1000000,
+          "tags": [
+            "vision",
+            "function_calling",
+            "computer_use",
+            "extended_thinking"
+          ]
+        },
+        {
+          "id": "claude-haiku-4-5",
+          "name": "Claude Haiku 4.5",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "claude-opus-4-20250514",
+          "name": "Claude Opus 4",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "vision",
+            "function_calling",
+            "computer_use"
+          ]
+        },
+        {
+          "id": "claude-sonnet-4-20250514",
+          "name": "Claude Sonnet 4",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "vision",
+            "function_calling",
+            "computer_use"
+          ]
+        },
+        {
+          "id": "claude-3-7-sonnet-20250219",
+          "name": "Claude 3.7 Sonnet",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "vision",
+            "function_calling",
+            "extended_thinking"
+          ]
+        },
+        {
+          "id": "claude-3-5-sonnet-20241022",
+          "name": "Claude 3.5 Sonnet v2",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "vision",
+            "function_calling",
+            "computer_use"
+          ]
+        },
+        {
+          "id": "claude-3-5-haiku-20241022",
+          "name": "Claude 3.5 Haiku",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        }
+      ]
+    },
+    "google": {
+      "name": "Google Gemini",
+      "baseUrl": "https://generativelanguage.googleapis.com/v1beta",
+      "authType": "query-key",
+      "queryParam": "key",
+      "billingType": "both",
+      "apiFormat": "google",
+      "loginUrl": "https://aistudio.google.com/app/apikey",
+      "docsUrl": "https://ai.google.dev/docs",
+      "subscriptionUrl": "https://aistudio.google.com/app/plan",
+      "accessModes": [
+        "apikey",
+        "oauth"
+      ],
+      "models": [
+        {
+          "id": "gemini-3.1-pro-preview",
+          "name": "Gemini 3.1 Pro Preview",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "function_calling",
+            "thinking",
+            "long_context"
+          ]
+        },
+        {
+          "id": "gemini-3-flash-preview",
+          "name": "Gemini 3 Flash Preview",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "function_calling",
+            "thinking",
+            "long_context"
+          ]
+        },
+        {
+          "id": "gemini-3.1-flash-lite-preview",
+          "name": "Gemini 3.1 Flash-Lite Preview",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "long_context"
+          ]
+        },
+        {
+          "id": "gemini-2.5-pro",
+          "name": "Gemini 2.5 Pro",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "function_calling",
+            "thinking",
+            "long_context"
+          ]
+        },
+        {
+          "id": "gemini-2.5-flash",
+          "name": "Gemini 2.5 Flash",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "function_calling",
+            "thinking",
+            "long_context"
+          ]
+        },
+        {
+          "id": "gemini-2.5-flash-lite",
+          "name": "Gemini 2.5 Flash-Lite",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision",
+            "long_context"
+          ]
+        },
+        {
+          "id": "imagen-4",
+          "name": "Imagen 4",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "veo-3.1-generate-preview",
+          "name": "Veo 3.1 Preview",
+          "type": "video",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "veo-3.1-lite-generate-preview",
+          "name": "Veo 3.1 Lite Preview",
+          "type": "video",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "gemini-2.5-flash-preview-tts",
+          "name": "Gemini 2.5 Flash TTS",
+          "type": "audio",
+          "tags": [
+            "tts"
+          ]
+        },
+        {
+          "id": "gemini-2.5-pro-preview-tts",
+          "name": "Gemini 2.5 Pro TTS",
+          "type": "audio",
+          "tags": [
+            "tts"
+          ]
+        },
+        {
+          "id": "gemini-embedding-2-preview",
+          "name": "Gemini Embedding 2",
+          "type": "embedding"
+        },
+        {
+          "id": "text-embedding-004",
+          "name": "Text Embedding 004",
+          "type": "embedding"
+        }
+      ]
+    },
+    "deepseek": {
+      "name": "DeepSeek",
+      "baseUrl": "https://api.deepseek.com",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.deepseek.com/api_keys",
+      "docsUrl": "https://platform.deepseek.com/api-docs",
+      "subscriptionUrl": "https://platform.deepseek.com/top_up",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "deepseek-chat",
+          "name": "DeepSeek-V3",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "deepseek-reasoner",
+          "name": "DeepSeek-R1",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "reasoning"
+          ]
+        }
+      ]
+    },
+    "moonshot": {
+      "name": "月之暗面 (Kimi/Moonshot)",
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.moonshot.cn/console/api-keys",
+      "docsUrl": "https://platform.moonshot.cn/docs",
+      "subscriptionUrl": "https://platform.moonshot.cn/console/account",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "kimi-k2.5",
+          "name": "Kimi K2.5",
+          "type": "text",
+          "ctx": 262144
+        },
+        {
+          "id": "kimi-k2-0905-preview",
+          "name": "Kimi K2 0905 Preview",
+          "type": "text",
+          "ctx": 262144
+        },
+        {
+          "id": "kimi-k2-0711-preview",
+          "name": "Kimi K2 0711 Preview",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "kimi-k2-turbo-preview",
+          "name": "Kimi K2 Turbo Preview",
+          "type": "text",
+          "ctx": 262144
+        },
+        {
+          "id": "kimi-k2-thinking",
+          "name": "Kimi K2 Thinking (深入推理)",
+          "type": "text",
+          "ctx": 262144,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "kimi-k2-thinking-turbo",
+          "name": "Kimi K2 Thinking Turbo",
+          "type": "text",
+          "ctx": 262144,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "moonshot-v1-8k",
+          "name": "Moonshot V1 8K",
+          "type": "text",
+          "ctx": 8192
+        },
+        {
+          "id": "moonshot-v1-32k",
+          "name": "Moonshot V1 32K",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "moonshot-v1-128k",
+          "name": "Moonshot V1 128K",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "moonshot-v1-8k-vision-preview",
+          "name": "Moonshot V1 8K Vision",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "moonshot-v1-32k-vision-preview",
+          "name": "Moonshot V1 32K Vision",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "moonshot-v1-128k-vision-preview",
+          "name": "Moonshot V1 128K Vision",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "vision"
+          ]
+        }
+      ]
+    },
+    "kimi_coding": {
+      "name": "Kimi Coding Plan",
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "coding-plan",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.moonshot.cn/console/account",
+      "docsUrl": "https://platform.moonshot.cn/docs",
+      "subscriptionUrl": "https://platform.moonshot.cn/console/account",
+      "accessModes": [
+        "apikey"
+      ],
+      "note": "Kimi Coding 订阅计划，使用独立 API Key",
+      "models": [
+        {
+          "id": "kimi-k2.7",
+          "name": "Kimi K2.7 (Coding)",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling",
+            "thinking"
+          ]
+        },
+        {
+          "id": "kimi-k2.5",
+          "name": "Kimi K2.5 (Coding)",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "kimi-k2-thinking",
+          "name": "Kimi K2 Thinking (Coding)",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "reasoning",
+            "thinking"
+          ]
+        }
+      ]
+    },
+    "qwen": {
+      "name": "通义千问 (Qwen) / 阿里云百炼",
+      "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "baseUrlIntl": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "authEnvVar": "DASHSCOPE_API_KEY",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://dashscope.console.aliyun.com/apiKey",
+      "docsUrl": "https://help.aliyun.com/zh/dashscope/",
+      "subscriptionUrl": "https://dashscope.console.aliyun.com/billing",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "qwen-max",
+          "name": "Qwen Max",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "qwen-plus",
+          "name": "Qwen Plus",
+          "type": "text",
+          "ctx": 128000
+        },
+        {
+          "id": "qwen-turbo",
+          "name": "Qwen Turbo",
+          "type": "text",
+          "ctx": 128000
+        },
+        {
+          "id": "qwen-long",
+          "name": "Qwen Long (长文本)",
+          "type": "text",
+          "ctx": 10000000
+        },
+        {
+          "id": "qwen2.5-max",
+          "name": "Qwen2.5 Max",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "qwen2.5-72b-instruct",
+          "name": "Qwen2.5 72B",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "qwen2.5-32b-instruct",
+          "name": "Qwen2.5 32B",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "qwen2.5-14b-instruct",
+          "name": "Qwen2.5 14B",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "qwen2.5-7b-instruct",
+          "name": "Qwen2.5 7B",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "qwen-coder-plus",
+          "name": "Qwen Coder Plus",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "qwen-coder-turbo",
+          "name": "Qwen Coder Turbo",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "qwen2.5-coder-32b-instruct",
+          "name": "Qwen2.5 Coder 32B",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "qwen2.5-coder-7b-instruct",
+          "name": "Qwen2.5 Coder 7B",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "qwen-math-plus",
+          "name": "Qwen Math Plus",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "qwen-math-turbo",
+          "name": "Qwen Math Turbo",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "qwen-vl-max",
+          "name": "Qwen VL Max",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "qwen-vl-plus",
+          "name": "Qwen VL Plus",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "qwen2.5-vl-72b-instruct",
+          "name": "Qwen2.5 VL 72B",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "qwen2.5-vl-7b-instruct",
+          "name": "Qwen2.5 VL 7B",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "qwen2-vl-72b-instruct",
+          "name": "Qwen2 VL 72B",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "qwen2-vl-7b-instruct",
+          "name": "Qwen2 VL 7B",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "qwen-omni-turbo",
+          "name": "Qwen Omni Turbo",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "qwen2-audio-72b-instruct",
+          "name": "Qwen2 Audio 72B",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "qwen-audio-turbo",
+          "name": "Qwen Audio Turbo",
+          "type": "audio",
+          "ctx": 8192
+        },
+        {
+          "id": "wanx2.1-t2i-turbo",
+          "name": "Wanx 2.1 图片生成 Turbo",
+          "type": "image",
+          "ctx": 0
+        },
+        {
+          "id": "wanx2.1-t2i-plus",
+          "name": "Wanx 2.1 图片生成 Plus",
+          "type": "image",
+          "ctx": 0
+        },
+        {
+          "id": "wanx2.1-t2v-plus",
+          "name": "Wanx 2.1 视频生成",
+          "type": "video",
+          "ctx": 0
+        },
+        {
+          "id": "text-embedding-v3",
+          "name": "Text Embedding v3",
+          "type": "text",
+          "ctx": 8192
+        }
+      ]
+    },
+    "zhipu": {
+      "name": "智谱AI (Zhipu/GLM)",
+      "baseUrl": "https://open.bigmodel.cn/api/paas/v4",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://open.bigmodel.cn/usercenter/apikeys",
+      "docsUrl": "https://open.bigmodel.cn/dev/api",
+      "subscriptionUrl": "https://open.bigmodel.cn/pricing",
+      "codingPlanUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "glm-4-plus",
+          "name": "GLM-4 Plus",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "glm-4-0520",
+          "name": "GLM-4 (0520)",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "glm-4-air",
+          "name": "GLM-4 Air",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "glm-4-airx",
+          "name": "GLM-4 AirX",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "glm-4-long",
+          "name": "GLM-4 Long",
+          "type": "text",
+          "ctx": 1000000,
+          "tags": [
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "glm-4-flashx",
+          "name": "GLM-4 FlashX",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "glm-4-flash",
+          "name": "GLM-4 Flash",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling",
+            "free"
+          ]
+        },
+        {
+          "id": "glm-4v-plus",
+          "name": "GLM-4V Plus (视觉)",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "glm-4v",
+          "name": "GLM-4V (视觉)",
+          "type": "text",
+          "ctx": 2048,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "glm-4v-flash",
+          "name": "GLM-4V Flash (视觉)",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "vision",
+            "free"
+          ]
+        },
+        {
+          "id": "cogview-3-plus",
+          "name": "CogView-3 Plus",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "cogview-3",
+          "name": "CogView-3",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "cogvideox",
+          "name": "CogVideoX",
+          "type": "video",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "cogvideox-flash",
+          "name": "CogVideoX Flash",
+          "type": "video",
+          "tags": [
+            "generation",
+            "free"
+          ]
+        },
+        {
+          "id": "embedding-3",
+          "name": "Embedding-3",
+          "type": "embedding"
+        },
+        {
+          "id": "embedding-2",
+          "name": "Embedding-2",
+          "type": "embedding"
+        }
+      ]
+    },
+    "baidu": {
+      "name": "百度文心 (ERNIE)",
+      "baseUrl": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat",
+      "authType": "query-token",
+      "authEnvVars": [
+        "AK",
+        "SK"
+      ],
+      "tokenUrl": "https://aip.baidubce.com/oauth/2.0/token",
+      "billingType": "both",
+      "apiFormat": "baidu",
+      "loginUrl": "https://console.bce.baidu.com/qianfan/ais/console/applicationConsole/application",
+      "docsUrl": "https://cloud.baidu.com/doc/WENXINWORKSHOP/index.html",
+      "subscriptionUrl": "https://console.bce.baidu.com/billing/#/account/index",
+      "accessModes": [
+        "apikey",
+        "oauth"
+      ],
+      "models": [
+        {
+          "id": "ernie-4.5-8k-preview",
+          "name": "ERNIE 4.5 8K",
+          "type": "text",
+          "ctx": 8192
+        },
+        {
+          "id": "ernie-4.5-turbo-8k-preview",
+          "name": "ERNIE 4.5 Turbo 8K",
+          "type": "text",
+          "ctx": 8192
+        },
+        {
+          "id": "ernie-4.5-turbo-128k-preview",
+          "name": "ERNIE 4.5 Turbo 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "long_context"
+          ]
+        },
+        {
+          "id": "completions_pro",
+          "name": "ERNIE 4.0",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "ernie-4.0-turbo-8k",
+          "name": "ERNIE 4.0 Turbo 8K",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "ernie-4.0-turbo-128k",
+          "name": "ERNIE 4.0 Turbo 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "completions",
+          "name": "ERNIE 3.5 8K",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "ernie-3.5-128k",
+          "name": "ERNIE 3.5 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "long_context"
+          ]
+        },
+        {
+          "id": "ernie-speed-128k",
+          "name": "ERNIE Speed 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "free",
+            "long_context"
+          ]
+        },
+        {
+          "id": "ernie-speed-pro-128k",
+          "name": "ERNIE Speed Pro 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "free",
+            "long_context"
+          ]
+        },
+        {
+          "id": "ernie-lite-128k",
+          "name": "ERNIE Lite 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "free",
+            "long_context"
+          ]
+        },
+        {
+          "id": "ernie-lite-pro-128k",
+          "name": "ERNIE Lite Pro 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "free",
+            "long_context"
+          ]
+        },
+        {
+          "id": "ernie-tiny-8k",
+          "name": "ERNIE Tiny 8K",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "free"
+          ]
+        }
+      ]
+    },
+    "doubao": {
+      "name": "豆包 (ByteDance/火山方舟)",
+      "baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey",
+      "docsUrl": "https://www.volcengine.com/docs/82379",
+      "subscriptionUrl": "https://console.volcengine.com/finance/unifiedBilling/detail",
+      "codingPlanUrl": "https://console.volcengine.com/ark/region:ark+cn-beijing/codingPlan",
+      "accessModes": [
+        "apikey"
+      ],
+      "note": "豆包模型需要先在火山方舟控制台创建接入点(Endpoint)，使用接入点 ID 作为 model 参数",
+      "models": [
+        {
+          "id": "doubao-1.5-pro-32k",
+          "name": "Doubao 1.5 Pro 32K",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "doubao-1.5-pro-256k",
+          "name": "Doubao 1.5 Pro 256K",
+          "type": "text",
+          "ctx": 262144,
+          "tags": [
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "doubao-1.5-lite-32k",
+          "name": "Doubao 1.5 Lite 32K",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "doubao-1.5-vision-pro-32k",
+          "name": "Doubao 1.5 Vision Pro",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "doubao-pro-32k",
+          "name": "Doubao Pro 32K",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "doubao-pro-128k",
+          "name": "Doubao Pro 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "doubao-pro-256k",
+          "name": "Doubao Pro 256K",
+          "type": "text",
+          "ctx": 262144,
+          "tags": [
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "doubao-lite-32k",
+          "name": "Doubao Lite 32K",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "doubao-lite-128k",
+          "name": "Doubao Lite 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "long_context"
+          ]
+        },
+        {
+          "id": "seedream",
+          "name": "Seedream 图片生成",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "doubao-embedding-large",
+          "name": "Doubao Embedding Large",
+          "type": "embedding"
+        }
+      ]
+    },
+    "minimax": {
+      "name": "MiniMax (海螺AI)",
+      "baseUrl": "https://api.minimax.chat/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.minimaxi.com/user-center/basic-information/interface-key",
+      "docsUrl": "https://platform.minimaxi.com/document/Announcement",
+      "subscriptionUrl": "https://platform.minimaxi.com/user-center/basic-information",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "MiniMax-M2.7",
+          "name": "MiniMax M2.7",
+          "type": "text",
+          "ctx": 204800
+        },
+        {
+          "id": "MiniMax-M2.7-highspeed",
+          "name": "MiniMax M2.7 Highspeed",
+          "type": "text",
+          "ctx": 204800
+        },
+        {
+          "id": "MiniMax-M2.5",
+          "name": "MiniMax M2.5",
+          "type": "text",
+          "ctx": 204800
+        },
+        {
+          "id": "MiniMax-M2.5-highspeed",
+          "name": "MiniMax M2.5 Highspeed",
+          "type": "text",
+          "ctx": 204800
+        },
+        {
+          "id": "MiniMax-M2.1",
+          "name": "MiniMax M2.1",
+          "type": "text",
+          "ctx": 204800,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "MiniMax-M2.1-highspeed",
+          "name": "MiniMax M2.1 Highspeed",
+          "type": "text",
+          "ctx": 204800,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "MiniMax-M2",
+          "name": "MiniMax M2",
+          "type": "text",
+          "ctx": 204800
+        },
+        {
+          "id": "speech-2.8-hd",
+          "name": "Speech 2.8 HD",
+          "type": "audio",
+          "ctx": 10000
+        },
+        {
+          "id": "speech-2.8-turbo",
+          "name": "Speech 2.8 Turbo",
+          "type": "audio",
+          "ctx": 10000
+        },
+        {
+          "id": "speech-2.6-hd",
+          "name": "Speech 2.6 HD",
+          "type": "audio",
+          "ctx": 10000
+        },
+        {
+          "id": "speech-2.6-turbo",
+          "name": "Speech 2.6 Turbo",
+          "type": "audio",
+          "ctx": 10000
+        },
+        {
+          "id": "speech-02-hd",
+          "name": "Speech 02 HD",
+          "type": "audio",
+          "ctx": 10000
+        },
+        {
+          "id": "speech-02-turbo",
+          "name": "Speech 02 Turbo",
+          "type": "audio",
+          "ctx": 10000
+        },
+        {
+          "id": "music-2.0",
+          "name": "Music 2.0",
+          "type": "audio",
+          "ctx": 0
+        },
+        {
+          "id": "minimax-hailuo-2.3",
+          "name": "MiniMax Hailuo 2.3",
+          "type": "video",
+          "ctx": 0
+        },
+        {
+          "id": "minimax-hailuo-2.3-fast",
+          "name": "MiniMax Hailuo 2.3 Fast",
+          "type": "video",
+          "ctx": 0
+        },
+        {
+          "id": "minimax-hailuo-02",
+          "name": "MiniMax Hailuo 02",
+          "type": "video",
+          "ctx": 0
+        },
+        {
+          "id": "image-01",
+          "name": "Image 01",
+          "type": "image",
+          "ctx": 0
+        },
+        {
+          "id": "image-01-live",
+          "name": "Image 01 Live",
+          "type": "image",
+          "ctx": 0
+        }
+      ]
+    },
+    "siliconflow": {
+      "name": "SiliconFlow (硅基流动)",
+      "baseUrl": "https://api.siliconflow.cn/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://cloud.siliconflow.cn/account/ak",
+      "docsUrl": "https://docs.siliconflow.cn",
+      "subscriptionUrl": "https://cloud.siliconflow.cn/account/charge",
+      "accessModes": [
+        "apikey"
+      ],
+      "note": "聚合平台，可调用多家开源模型，部分模型免费",
+      "models": [
+        {
+          "id": "deepseek-ai/DeepSeek-V3",
+          "name": "DeepSeek V3",
+          "type": "text",
+          "ctx": 65536
+        },
+        {
+          "id": "deepseek-ai/DeepSeek-R1",
+          "name": "DeepSeek R1",
+          "type": "text",
+          "ctx": 65536,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "Qwen/Qwen2.5-72B-Instruct",
+          "name": "Qwen2.5 72B",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "Qwen/Qwen2.5-32B-Instruct",
+          "name": "Qwen2.5 32B",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "Qwen/Qwen2.5-7B-Instruct",
+          "name": "Qwen2.5 7B",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "free"
+          ]
+        },
+        {
+          "id": "Qwen/Qwen2.5-Coder-32B-Instruct",
+          "name": "Qwen2.5 Coder 32B",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "coding"
+          ]
+        },
+        {
+          "id": "Qwen/QwQ-32B",
+          "name": "QwQ 32B",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "Pro/Qwen/Qwen2.5-VL-7B-Instruct",
+          "name": "Qwen2.5 VL 7B",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "THUDM/glm-4-9b-chat",
+          "name": "GLM-4 9B",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "free"
+          ]
+        },
+        {
+          "id": "meta-llama/Llama-3.3-70B-Instruct",
+          "name": "Llama 3.3 70B",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "google/gemma-2-27b-it",
+          "name": "Gemma 2 27B",
+          "type": "text",
+          "ctx": 8192
+        },
+        {
+          "id": "stabilityai/stable-diffusion-3-5-large",
+          "name": "SD 3.5 Large",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        },
+        {
+          "id": "black-forest-labs/FLUX.1-schnell",
+          "name": "FLUX.1 Schnell",
+          "type": "image",
+          "tags": [
+            "generation",
+            "free"
+          ]
+        },
+        {
+          "id": "black-forest-labs/FLUX.1-dev",
+          "name": "FLUX.1 Dev",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        }
+      ]
+    },
+    "stepfun": {
+      "name": "阶跃星辰 (StepFun)",
+      "baseUrl": "https://api.stepfun.com/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://platform.stepfun.com/interface-key",
+      "docsUrl": "https://platform.stepfun.com/docs/overview/concept",
+      "subscriptionUrl": "https://platform.stepfun.com/account-management",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "step-2-16k",
+          "name": "Step-2 16K",
+          "type": "text",
+          "ctx": 16384,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "step-2-16k-exp",
+          "name": "Step-2 16K Exp",
+          "type": "text",
+          "ctx": 16384,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "step-1-200k",
+          "name": "Step-1 200K",
+          "type": "text",
+          "ctx": 204800,
+          "tags": [
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "step-1-128k",
+          "name": "Step-1 128K",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "step-1-32k",
+          "name": "Step-1 32K",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "step-1v-32k",
+          "name": "Step-1V 32K (视觉)",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "step-1.5v-mini",
+          "name": "Step-1.5V Mini (视觉)",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "step-1x-medium",
+          "name": "Step-1X Medium (图片)",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        }
+      ]
+    },
+    "mistral": {
+      "name": "Mistral AI",
+      "baseUrl": "https://api.mistral.ai/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://console.mistral.ai/api-keys",
+      "docsUrl": "https://docs.mistral.ai",
+      "subscriptionUrl": "https://console.mistral.ai/billing",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "mistral-large-latest",
+          "name": "Mistral Large",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "mistral-medium-latest",
+          "name": "Mistral Medium",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "mistral-small-latest",
+          "name": "Mistral Small",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "open-mistral-nemo",
+          "name": "Mistral Nemo",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "codestral-latest",
+          "name": "Codestral",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "coding",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "pixtral-large-latest",
+          "name": "Pixtral Large (视觉)",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "pixtral-12b-2409",
+          "name": "Pixtral 12B (视觉)",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "mistral-embed",
+          "name": "Mistral Embed",
+          "type": "embedding"
+        }
+      ]
+    },
+    "xai": {
+      "name": "xAI (Grok)",
+      "baseUrl": "https://api.x.ai/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://accounts.x.ai",
+      "docsUrl": "https://docs.x.ai",
+      "subscriptionUrl": "https://accounts.x.ai",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "grok-3",
+          "name": "Grok 3",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "vision",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "grok-3-mini",
+          "name": "Grok 3 Mini",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "reasoning",
+            "function_calling"
+          ]
+        },
+        {
+          "id": "grok-3-fast",
+          "name": "Grok 3 Fast",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "grok-3-mini-fast",
+          "name": "Grok 3 Mini Fast",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "grok-2-vision-1212",
+          "name": "Grok 2 Vision",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "grok-2-1212",
+          "name": "Grok 2",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "grok-vision-beta",
+          "name": "Grok Vision Beta",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "vision"
+          ]
+        }
+      ]
+    },
+    "cohere": {
+      "name": "Cohere",
+      "baseUrl": "https://api.cohere.ai/compatibility/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://dashboard.cohere.com/api-keys",
+      "docsUrl": "https://docs.cohere.com/docs/compatibility-api",
+      "subscriptionUrl": "https://dashboard.cohere.com",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "command-a-03-2025",
+          "name": "Command A",
+          "type": "text",
+          "ctx": 256000,
+          "tags": [
+            "function_calling",
+            "long_context"
+          ]
+        },
+        {
+          "id": "command-r-plus-08-2024",
+          "name": "Command R+",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling",
+            "rag"
+          ]
+        },
+        {
+          "id": "command-r-08-2024",
+          "name": "Command R",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling",
+            "rag"
+          ]
+        },
+        {
+          "id": "command-r7b-12-2024",
+          "name": "Command R7B",
+          "type": "text",
+          "ctx": 128000,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "embed-v4.0",
+          "name": "Embed v4.0",
+          "type": "embedding"
+        },
+        {
+          "id": "embed-multilingual-v3.0",
+          "name": "Embed Multilingual v3.0",
+          "type": "embedding"
+        },
+        {
+          "id": "rerank-v3.5",
+          "name": "Rerank v3.5",
+          "type": "text",
+          "tags": [
+            "rerank"
+          ]
+        }
+      ]
+    },
+    "groq": {
+      "name": "Groq",
+      "baseUrl": "https://api.groq.com/openai/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://console.groq.com/keys",
+      "docsUrl": "https://console.groq.com/docs/openai",
+      "subscriptionUrl": "https://console.groq.com",
+      "accessModes": [
+        "apikey"
+      ],
+      "note": "超低延迟推理引擎，免费额度较高",
+      "models": [
+        {
+          "id": "llama-3.3-70b-versatile",
+          "name": "Llama 3.3 70B Versatile",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "llama-3.1-8b-instant",
+          "name": "Llama 3.1 8B Instant",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "llama-3.2-90b-vision-preview",
+          "name": "Llama 3.2 90B Vision",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "llama-3.2-11b-vision-preview",
+          "name": "Llama 3.2 11B Vision",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "mixtral-8x7b-32768",
+          "name": "Mixtral 8x7B",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "gemma2-9b-it",
+          "name": "Gemma 2 9B",
+          "type": "text",
+          "ctx": 8192
+        },
+        {
+          "id": "deepseek-r1-distill-llama-70b",
+          "name": "DeepSeek R1 Distill 70B",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "qwen-qwq-32b",
+          "name": "QwQ 32B",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "reasoning"
+          ]
+        }
+      ]
+    },
+    "perplexity": {
+      "name": "Perplexity",
+      "baseUrl": "https://api.perplexity.ai",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://www.perplexity.ai/settings/api",
+      "docsUrl": "https://docs.perplexity.ai",
+      "subscriptionUrl": "https://www.perplexity.ai/settings/api",
+      "accessModes": [
+        "apikey"
+      ],
+      "note": "内置联网搜索的 AI API，返回结果自带引用来源",
+      "models": [
+        {
+          "id": "sonar",
+          "name": "Sonar",
+          "type": "text",
+          "ctx": 127072,
+          "tags": [
+            "web_search"
+          ]
+        },
+        {
+          "id": "sonar-pro",
+          "name": "Sonar Pro",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "web_search"
+          ]
+        },
+        {
+          "id": "sonar-reasoning",
+          "name": "Sonar Reasoning",
+          "type": "text",
+          "ctx": 127072,
+          "tags": [
+            "web_search",
+            "reasoning"
+          ]
+        },
+        {
+          "id": "sonar-reasoning-pro",
+          "name": "Sonar Reasoning Pro",
+          "type": "text",
+          "ctx": 127072,
+          "tags": [
+            "web_search",
+            "reasoning"
+          ]
+        },
+        {
+          "id": "sonar-deep-research",
+          "name": "Sonar Deep Research",
+          "type": "text",
+          "ctx": 127072,
+          "tags": [
+            "web_search",
+            "reasoning"
+          ]
+        }
+      ]
+    },
+    "openrouter": {
+      "name": "OpenRouter",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://openrouter.ai/settings/keys",
+      "docsUrl": "https://openrouter.ai/docs/quickstart",
+      "subscriptionUrl": "https://openrouter.ai/settings/credits",
+      "accessModes": [
+        "apikey"
+      ],
+      "note": "聚合路由平台，一个 API Key 调用 200+ 模型，支持自动回退",
+      "models": [
+        {
+          "id": "openai/gpt-4o",
+          "name": "OpenAI GPT-4o",
+          "type": "text",
+          "ctx": 128000
+        },
+        {
+          "id": "openai/gpt-4.1",
+          "name": "OpenAI GPT-4.1",
+          "type": "text",
+          "ctx": 1048576
+        },
+        {
+          "id": "openai/o3",
+          "name": "OpenAI o3",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "anthropic/claude-sonnet-4",
+          "name": "Claude Sonnet 4",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "anthropic/claude-3.5-sonnet",
+          "name": "Claude 3.5 Sonnet",
+          "type": "text",
+          "ctx": 200000,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "google/gemini-2.5-pro-preview",
+          "name": "Gemini 2.5 Pro",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "google/gemini-2.5-flash-preview",
+          "name": "Gemini 2.5 Flash",
+          "type": "text",
+          "ctx": 1048576,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "deepseek/deepseek-chat",
+          "name": "DeepSeek V3",
+          "type": "text",
+          "ctx": 65536
+        },
+        {
+          "id": "deepseek/deepseek-r1",
+          "name": "DeepSeek R1",
+          "type": "text",
+          "ctx": 65536,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "x-ai/grok-3",
+          "name": "Grok 3",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "meta-llama/llama-3.3-70b-instruct",
+          "name": "Llama 3.3 70B",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "qwen/qwen-2.5-72b-instruct",
+          "name": "Qwen2.5 72B",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "mistralai/mistral-large-latest",
+          "name": "Mistral Large",
+          "type": "text",
+          "ctx": 131072
+        }
+      ]
+    },
+    "together": {
+      "name": "Together AI",
+      "baseUrl": "https://api.together.xyz/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://api.together.ai/settings/api-keys",
+      "docsUrl": "https://docs.together.ai/docs/openai-api-compatibility",
+      "subscriptionUrl": "https://api.together.ai/settings/billing",
+      "accessModes": [
+        "apikey"
+      ],
+      "note": "开源模型推理平台，支持微调和部署",
+      "models": [
+        {
+          "id": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
+          "name": "Llama 4 Maverick",
+          "type": "text",
+          "ctx": 1048576
+        },
+        {
+          "id": "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+          "name": "Llama 4 Scout",
+          "type": "text",
+          "ctx": 524288
+        },
+        {
+          "id": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+          "name": "Llama 3.3 70B Turbo",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "deepseek-ai/DeepSeek-V3",
+          "name": "DeepSeek V3",
+          "type": "text",
+          "ctx": 65536
+        },
+        {
+          "id": "deepseek-ai/DeepSeek-R1",
+          "name": "DeepSeek R1",
+          "type": "text",
+          "ctx": 65536,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "Qwen/Qwen2.5-72B-Instruct-Turbo",
+          "name": "Qwen2.5 72B Turbo",
+          "type": "text",
+          "ctx": 131072
+        },
+        {
+          "id": "Qwen/QwQ-32B",
+          "name": "QwQ 32B",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "mistralai/Mixtral-8x22B-Instruct-v0.1",
+          "name": "Mixtral 8x22B",
+          "type": "text",
+          "ctx": 65536
+        },
+        {
+          "id": "black-forest-labs/FLUX.1-schnell-Free",
+          "name": "FLUX.1 Schnell",
+          "type": "image",
+          "tags": [
+            "generation",
+            "free"
+          ]
+        },
+        {
+          "id": "black-forest-labs/FLUX.1.1-pro",
+          "name": "FLUX 1.1 Pro",
+          "type": "image",
+          "tags": [
+            "generation"
+          ]
+        }
+      ]
+    },
+    "fireworks": {
+      "name": "Fireworks AI",
+      "baseUrl": "https://api.fireworks.ai/inference/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://app.fireworks.ai/api-keys",
+      "docsUrl": "https://docs.fireworks.ai/tools-sdks/openai-compatibility",
+      "subscriptionUrl": "https://app.fireworks.ai",
+      "accessModes": [
+        "apikey"
+      ],
+      "note": "专注于开源模型的高性能推理平台",
+      "models": [
+        {
+          "id": "accounts/fireworks/models/llama-v3p3-70b-instruct",
+          "name": "Llama 3.3 70B",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+          "name": "Llama 3.1 405B",
+          "type": "text",
+          "ctx": 131072,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "accounts/fireworks/models/deepseek-v3",
+          "name": "DeepSeek V3",
+          "type": "text",
+          "ctx": 65536
+        },
+        {
+          "id": "accounts/fireworks/models/deepseek-r1",
+          "name": "DeepSeek R1",
+          "type": "text",
+          "ctx": 65536,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "accounts/fireworks/models/qwen2p5-72b-instruct",
+          "name": "Qwen2.5 72B",
+          "type": "text",
+          "ctx": 32768
+        },
+        {
+          "id": "accounts/fireworks/models/mixtral-8x22b-instruct",
+          "name": "Mixtral 8x22B",
+          "type": "text",
+          "ctx": 65536
+        },
+        {
+          "id": "accounts/fireworks/models/firefunction-v2",
+          "name": "FireFunction V2",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "function_calling"
+          ]
+        }
+      ]
+    },
+    "tencent_hunyuan": {
+      "name": "腾讯混元 (HunYuan)",
+      "baseUrl": "https://api.hunyuan.cloud.tencent.com/v1",
+      "authType": "bearer",
+      "authHeader": "Authorization",
+      "billingType": "apikey",
+      "apiFormat": "openai",
+      "loginUrl": "https://console.cloud.tencent.com/hunyuan/api-key",
+      "docsUrl": "https://cloud.tencent.com/document/product/1729/111007",
+      "subscriptionUrl": "https://console.cloud.tencent.com/expense",
+      "accessModes": [
+        "apikey"
+      ],
+      "models": [
+        {
+          "id": "hunyuan-turbos-latest",
+          "name": "HunYuan TurboS Latest",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "hunyuan-t1-latest",
+          "name": "HunYuan T1 Latest",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "reasoning"
+          ]
+        },
+        {
+          "id": "hunyuan-large",
+          "name": "HunYuan Large",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "hunyuan-turbo",
+          "name": "HunYuan Turbo",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "function_calling"
+          ]
+        },
+        {
+          "id": "hunyuan-standard-256k",
+          "name": "HunYuan Standard 256K",
+          "type": "text",
+          "ctx": 262144,
+          "tags": [
+            "long_context"
+          ]
+        },
+        {
+          "id": "hunyuan-lite",
+          "name": "HunYuan Lite",
+          "type": "text",
+          "ctx": 32768,
+          "tags": [
+            "free"
+          ]
+        },
+        {
+          "id": "hunyuan-vision",
+          "name": "HunYuan Vision",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "vision"
+          ]
+        },
+        {
+          "id": "hunyuan-code",
+          "name": "HunYuan Code",
+          "type": "text",
+          "ctx": 8192,
+          "tags": [
+            "coding"
+          ]
+        }
+      ]
+    }
+  },
+  "providerSummaries": [
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "authModes": [
+        "apikey",
+        "oauth"
+      ],
+      "billingType": "both",
+      "modelCount": 27,
+      "highlights": "GPT-5.4 / o3 / DALL-E / Sora / Whisper"
+    },
+    {
+      "id": "openai_codex",
+      "name": "OpenAI Codex",
+      "authModes": [
+        "oauth"
+      ],
+      "billingType": "subscription",
+      "modelCount": 8,
+      "highlights": "ChatGPT Plus 订阅 OAuth"
+    },
+    {
+      "id": "github_copilot",
+      "name": "GitHub Copilot",
+      "authModes": [
+        "token"
+      ],
+      "billingType": "subscription",
+      "modelCount": 27,
+      "highlights": "多模型路由 GPT-5.4/Claude Opus 4.6/Gemini 3.1 Pro/Grok"
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "authModes": [
+        "apikey",
+        "oauth"
+      ],
+      "billingType": "both",
+      "modelCount": 7,
+      "highlights": "Claude Opus 4 / Sonnet 4 / Computer Use"
+    },
+    {
+      "id": "google",
+      "name": "Google Gemini",
+      "authModes": [
+        "apikey",
+        "oauth"
+      ],
+      "billingType": "both",
+      "modelCount": 12,
+      "highlights": "Gemini 2.5 Pro 1M / Imagen / Veo"
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 2,
+      "highlights": "DeepSeek-V3 / R1 推理"
+    },
+    {
+      "id": "moonshot",
+      "name": "Moonshot/Kimi",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 12,
+      "highlights": "Kimi K2.7 / K2.5 / 128K长文本"
+    },
+    {
+      "id": "kimi_coding",
+      "name": "Kimi Coding Plan",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "coding-plan",
+      "modelCount": 3,
+      "highlights": "Kimi K2.7 / K2.5 编程订阅"
+    },
+    {
+      "id": "qwen",
+      "name": "通义千问 (Qwen)",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 28,
+      "highlights": "Qwen3 / VL / Coder / 万相图片视频"
+    },
+    {
+      "id": "zhipu",
+      "name": "智谱AI",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 16,
+      "highlights": "GLM-4 / CogView / CogVideoX"
+    },
+    {
+      "id": "baidu",
+      "name": "百度文心 (ERNIE)",
+      "authModes": [
+        "apikey",
+        "oauth"
+      ],
+      "billingType": "both",
+      "modelCount": 13,
+      "highlights": "ERNIE 4.5 / 免费模型"
+    },
+    {
+      "id": "doubao",
+      "name": "豆包 (ByteDance)",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 11,
+      "highlights": "256K长文本 / Vision / Seedream"
+    },
+    {
+      "id": "minimax",
+      "name": "MiniMax (海螺AI)",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 19,
+      "highlights": "MiniMax-M1 (2.7) / 1M上下文 / TTS / Hailuo Video"
+    },
+    {
+      "id": "siliconflow",
+      "name": "SiliconFlow",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 14,
+      "highlights": "聚合平台 / 部分开源模型免费"
+    },
+    {
+      "id": "stepfun",
+      "name": "阶跃星辰 (StepFun)",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 8,
+      "highlights": "Step-2 / 200K长文本 / 视觉"
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral AI",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 8,
+      "highlights": "Mistral Large / Codestral / Pixtral"
+    },
+    {
+      "id": "xai",
+      "name": "xAI (Grok)",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 7,
+      "highlights": "Grok 3 / 推理 / 视觉"
+    },
+    {
+      "id": "cohere",
+      "name": "Cohere",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 7,
+      "highlights": "Command A / RAG / Rerank"
+    },
+    {
+      "id": "groq",
+      "name": "Groq",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 8,
+      "highlights": "超低延迟推理 / 免费额度"
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 5,
+      "highlights": "内置联网搜索 / 带引用来源"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 13,
+      "highlights": "聚合路由 / 200+模型 / 自动回退"
+    },
+    {
+      "id": "together",
+      "name": "Together AI",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 10,
+      "highlights": "开源模型推理 / 微调 / Llama 4"
+    },
+    {
+      "id": "fireworks",
+      "name": "Fireworks AI",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 7,
+      "highlights": "高性能开源推理 / FireFunction"
+    },
+    {
+      "id": "tencent_hunyuan",
+      "name": "腾讯混元",
+      "authModes": [
+        "apikey"
+      ],
+      "billingType": "apikey",
+      "modelCount": 8,
+      "highlights": "256K长文本 / T1推理 / 免费Lite"
+    }
+  ],
+  "authProfiles": {
+    "openai:apikey": {
+      "providerId": "openai",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${OPENAI_API_KEY}",
+      "billingMode": "payg"
+    },
+    "openai:oauth": {
+      "providerId": "openai",
+      "authMode": "oauth",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${OPENAI_OAUTH_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "subscription"
+    },
+    "openai_codex:oauth": {
+      "providerId": "openai_codex",
+      "authMode": "oauth",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${OPENAI_CODEX_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "coding-plan"
+    },
+    "github_copilot:token": {
+      "providerId": "github_copilot",
+      "authMode": "token",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${GITHUB_COPILOT_TOKEN}",
+      "billingMode": "subscription"
+    },
+    "anthropic:apikey": {
+      "providerId": "anthropic",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "x-api-key",
+      "headerFormat": "${ANTHROPIC_API_KEY}",
+      "extraHeaders": {
+        "anthropic-version": "2023-06-01"
+      },
+      "billingMode": "payg"
+    },
+    "anthropic:oauth": {
+      "providerId": "anthropic",
+      "authMode": "oauth",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${ANTHROPIC_OAUTH_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "subscription"
+    },
+    "google:apikey": {
+      "providerId": "google",
+      "authMode": "apikey",
+      "credentialLocation": "query",
+      "queryParam": "key",
+      "queryFormat": "${GOOGLE_API_KEY}",
+      "billingMode": "payg"
+    },
+    "google:oauth": {
+      "providerId": "google",
+      "authMode": "oauth",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${GOOGLE_OAUTH_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "subscription"
+    },
+    "deepseek:apikey": {
+      "providerId": "deepseek",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${DEEPSEEK_API_KEY}",
+      "billingMode": "payg"
+    },
+    "moonshot:apikey": {
+      "providerId": "moonshot",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${MOONSHOT_API_KEY}",
+      "billingMode": "payg"
+    },
+    "moonshot:coding-plan-apikey": {
+      "providerId": "kimi_coding",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${MOONSHOT_CODING_PLAN_KEY}",
+      "billingMode": "coding-plan"
+    },
+    "qwen:apikey": {
+      "providerId": "qwen",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${DASHSCOPE_API_KEY}",
+      "billingMode": "payg"
+    },
+    "zhipu:apikey": {
+      "providerId": "zhipu",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${ZHIPU_API_KEY}",
+      "billingMode": "payg"
+    },
+    "zhipu:coding-plan-apikey": {
+      "providerId": "zhipu",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${ZHIPU_CODING_PLAN_KEY}",
+      "billingMode": "coding-plan"
+    },
+    "baidu:aksk-token": {
+      "providerId": "baidu",
+      "authMode": "query-token",
+      "tokenSource": "oauth2_client_credentials",
+      "tokenUrl": "https://aip.baidubce.com/oauth/2.0/token",
+      "tokenRequest": {
+        "grant_type": "client_credentials",
+        "client_id": "${BAIDU_AK}",
+        "client_secret": "${BAIDU_SK}"
+      },
+      "credentialLocation": "query",
+      "queryParam": "access_token",
+      "billingMode": "payg"
+    },
+    "baidu:oauth": {
+      "providerId": "baidu",
+      "authMode": "oauth",
+      "credentialLocation": "query",
+      "queryParam": "access_token",
+      "queryFormat": "${BAIDU_OAUTH_ACCESS_TOKEN}",
+      "refreshable": true,
+      "billingMode": "subscription"
+    },
+    "doubao:apikey": {
+      "providerId": "doubao",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${DOUBAO_API_KEY}",
+      "billingMode": "payg"
+    },
+    "doubao:coding-plan-apikey": {
+      "providerId": "doubao",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${DOUBAO_CODING_PLAN_KEY}",
+      "billingMode": "coding-plan"
+    },
+    "minimax:apikey": {
+      "providerId": "minimax",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${MINIMAX_API_KEY}",
+      "billingMode": "payg"
+    },
+    "siliconflow:apikey": {
+      "providerId": "siliconflow",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${SILICONFLOW_API_KEY}",
+      "billingMode": "payg"
+    },
+    "stepfun:apikey": {
+      "providerId": "stepfun",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${STEPFUN_API_KEY}",
+      "billingMode": "payg"
+    },
+    "mistral:apikey": {
+      "providerId": "mistral",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${MISTRAL_API_KEY}",
+      "billingMode": "payg"
+    },
+    "xai:apikey": {
+      "providerId": "xai",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${XAI_API_KEY}",
+      "billingMode": "payg"
+    },
+    "cohere:apikey": {
+      "providerId": "cohere",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${COHERE_API_KEY}",
+      "billingMode": "payg"
+    },
+    "groq:apikey": {
+      "providerId": "groq",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${GROQ_API_KEY}",
+      "billingMode": "payg"
+    },
+    "perplexity:apikey": {
+      "providerId": "perplexity",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${PERPLEXITY_API_KEY}",
+      "billingMode": "payg"
+    },
+    "openrouter:apikey": {
+      "providerId": "openrouter",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${OPENROUTER_API_KEY}",
+      "billingMode": "payg"
+    },
+    "together:apikey": {
+      "providerId": "together",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${TOGETHER_API_KEY}",
+      "billingMode": "payg"
+    },
+    "fireworks:apikey": {
+      "providerId": "fireworks",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${FIREWORKS_API_KEY}",
+      "billingMode": "payg"
+    },
+    "tencent_hunyuan:apikey": {
+      "providerId": "tencent_hunyuan",
+      "authMode": "apikey",
+      "credentialLocation": "header",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer ${TENCENT_HUNYUAN_API_KEY}",
+      "billingMode": "payg"
+    }
+  },
+  "yourConfiguredProviders": {
+    "openai:default": {
+      "providerId": "openai",
+      "profileId": "openai:default",
+      "authProfileRef": "openai:apikey",
+      "authType": "apikey",
+      "description": "OpenAI 默认 API Key"
+    },
+    "openai:oauth-default": {
+      "providerId": "openai",
+      "profileId": "openai:oauth-default",
+      "authProfileRef": "openai:oauth",
+      "authType": "oauth",
+      "description": "OpenAI OAuth 订阅版"
+    },
+    "openai_codex:default": {
+      "providerId": "openai_codex",
+      "profileId": "openai_codex:default",
+      "authProfileRef": "openai_codex:oauth",
+      "authType": "oauth",
+      "description": "OpenAI Codex Coding Plan"
+    },
+    "github_copilot:default": {
+      "providerId": "github_copilot",
+      "profileId": "github_copilot:default",
+      "authProfileRef": "github_copilot:token",
+      "authType": "token",
+      "description": "GitHub Copilot 订阅令牌"
+    },
+    "google:oauth-default": {
+      "providerId": "google",
+      "profileId": "google:oauth-default",
+      "authProfileRef": "google:oauth",
+      "authType": "oauth",
+      "description": "Google Gemini OAuth"
+    },
+    "anthropic:oauth-default": {
+      "providerId": "anthropic",
+      "profileId": "anthropic:oauth-default",
+      "authProfileRef": "anthropic:oauth",
+      "authType": "oauth",
+      "description": "Anthropic Claude OAuth"
+    },
+    "baidu:oauth-default": {
+      "providerId": "baidu",
+      "profileId": "baidu:oauth-default",
+      "authProfileRef": "baidu:oauth",
+      "authType": "oauth",
+      "description": "百度文心 OAuth"
+    },
+    "moonshot:coding-default": {
+      "providerId": "kimi_coding",
+      "profileId": "moonshot:coding-default",
+      "authProfileRef": "moonshot:coding-plan-apikey",
+      "authType": "apikey",
+      "description": "Kimi Coding Plan"
+    }
+  }
+}

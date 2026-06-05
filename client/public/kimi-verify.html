@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kimi Coding 订阅验证</title>
+    <style>
+      :root {
+        --bg: #f5f7fb; --card: #ffffff; --text: #18212f; --muted: #5b6574;
+        --border: #dbe2ea; --primary: #6d28d9; --success: #147d45;
+        --success-bg: #edf9f1; --error: #b42318; --error-bg: #fff0ee;
+        --info: #1d4ed8; --info-bg: #eef4ff;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif; background: linear-gradient(180deg, #f8fafc 0%, #f0ebff 100%); color: var(--text); }
+      .page { max-width: 880px; margin: 0 auto; padding: 32px 20px 40px; }
+      .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08); overflow: hidden; }
+      .hero { padding: 28px 28px 22px; border-bottom: 1px solid var(--border); }
+      .hero h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.2; }
+      .hero p { margin: 0; color: var(--muted); line-height: 1.6; }
+      .content { padding: 24px 28px 28px; display: grid; gap: 16px; }
+      .panel { border: 1px solid var(--border); border-radius: 16px; padding: 18px; background: #fff; }
+      .panel h2 { margin: 0 0 10px; font-size: 17px; }
+      .status { border-radius: 14px; padding: 14px 16px; line-height: 1.6; font-size: 14px; }
+      .status.info { background: var(--info-bg); color: var(--info); }
+      .status.success { background: var(--success-bg); color: var(--success); }
+      .status.error { background: var(--error-bg); color: var(--error); }
+      .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+      .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--border); background: #fff; color: var(--text); text-decoration: none; cursor: pointer; font-size: 14px; font-weight: 600; }
+      .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+      .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+      .hint { color: var(--muted); font-size: 13px; line-height: 1.6; }
+      .meta { display: grid; gap: 10px; color: var(--muted); line-height: 1.6; }
+      .meta strong { color: var(--text); }
+      .hidden { display: none; }
+      .device-code { font-size: 32px; font-weight: 700; letter-spacing: 2px; color: var(--primary); user-select: all; cursor: pointer; padding: 8px 0; }
+      @media (max-width: 640px) { .page { padding: 16px 12px 24px; } .hero, .content { padding-left: 16px; padding-right: 16px; } }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="card">
+        <div class="hero">
+          <h1>Kimi Coding 订阅验证</h1>
+          <p>使用 Kimi 账号授权设备码登录。点击开始后会生成设备码，在 Kimi 网页完成授权即可。</p>
+        </div>
+        <div class="content">
+          <div id="status" class="status info">准备开始 Kimi 授权...</div>
+
+          <div id="start-panel" class="panel">
+            <h2>开始验证</h2>
+            <div class="actions">
+              <button id="start-btn" class="btn primary" type="button">申请设备码</button>
+            </div>
+          </div>
+
+          <div id="device-panel" class="panel hidden">
+            <h2>设备码</h2>
+            <div class="device-code" id="user-code">-</div>
+            <div class="actions">
+              <button id="copy-btn" class="btn" type="button">复制设备码</button>
+              <a id="verify-link" class="btn primary" href="#" onclick="window.open(this.href, '_blank'); return false;" rel="noreferrer">打开 Kimi 授权页</a>
+            </div>
+            <div class="hint" style="margin-top: 10px;">
+              复制设备码后，在 Kimi 授权页面粘贴并确认授权。完成后此页面会自动检测。
+            </div>
+            <div class="actions" style="margin-top: 12px;">
+              <button id="complete-btn" class="btn" type="button">我已完成授权，立即验证</button>
+              <button id="restart-btn" class="btn" type="button">重新发起验证</button>
+            </div>
+          </div>
+
+          <div id="result-panel" class="panel hidden">
+            <h2>验证结果</h2>
+            <div id="result-meta" class="meta"></div>
+            <div class="actions" style="margin-top: 12px;">
+              <button id="close-btn" class="btn primary" type="button">关闭窗口</button>
+              <button id="restart-result-btn" class="btn" type="button">重新验证</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const providerId = 'kimi_coding';
+      const statusEl = document.getElementById('status');
+      const startPanel = document.getElementById('start-panel');
+      const startBtn = document.getElementById('start-btn');
+      const devicePanel = document.getElementById('device-panel');
+      const userCodeEl = document.getElementById('user-code');
+      const copyBtn = document.getElementById('copy-btn');
+      const verifyLinkEl = document.getElementById('verify-link');
+      const completeBtn = document.getElementById('complete-btn');
+      const restartBtn = document.getElementById('restart-btn');
+      const resultPanel = document.getElementById('result-panel');
+      const resultMeta = document.getElementById('result-meta');
+      const closeBtn = document.getElementById('close-btn');
+      const restartResultBtn = document.getElementById('restart-result-btn');
+
+      let pollTimer = null;
+      let currentDeviceCode = '';
+      let currentUserCode = '';
+      let currentInterval = 5;
+      let authCompleted = false;
+      let statusPollTimer = null;
+
+      function setStatus(type, msg) { statusEl.className = `status ${type}`; statusEl.textContent = msg; }
+      function setHidden(el, hidden) { el.classList.toggle('hidden', hidden); }
+
+      function postBack(type, message) {
+        try { localStorage.setItem('provider-oauth-result', JSON.stringify({ type, providerId, message, ts: Date.now() })); } catch {}
+        if (window.opener && !window.opener.closed) { window.opener.postMessage({ type, providerId, message }, window.location.origin); }
+      }
+
+      async function fetchJson(url, options, timeoutMs = 20000) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const res = await fetch(url, { ...(options || {}), signal: controller.signal });
+          const data = await res.json().catch(() => ({}));
+          return { ok: res.ok, data };
+        } finally { clearTimeout(timer); }
+      }
+
+      async function copyText(text) {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+
+      async function startDeviceFlow() {
+        setStatus('info', '正在申请 Kimi 设备码...');
+        startBtn.disabled = true;
+        try {
+          const result = await fetchJson('/api/auth/kimi/device/start', { method: 'POST' });
+          if (!result.ok || !result.data?.device_code) {
+            throw new Error(result.data?.error || '申请设备码失败');
+          }
+
+          currentDeviceCode = result.data.device_code;
+          currentUserCode = result.data.user_code || '';
+          currentInterval = Math.max(result.data.interval || 5, 5);
+
+          userCodeEl.textContent = currentUserCode || '-';
+          verifyLinkEl.href = result.data.verification_uri_complete || result.data.verification_uri || 'https://kimi.com';
+          setHidden(startPanel, true);
+          setHidden(devicePanel, false);
+          setHidden(resultPanel, true);
+
+          try { await copyText(currentUserCode); } catch {}
+
+          setStatus('info', '设备码已生成。请在 Kimi 授权页完成授权，当前页面会自动继续验证。');
+          startPolling(currentDeviceCode, currentInterval);
+        } catch (error) {
+          setStatus('error', error.message || '申请设备码失败，请重试');
+        } finally {
+          startBtn.disabled = false;
+        }
+      }
+
+      async function pollDeviceFlow(deviceCode) {
+        let response;
+        try {
+          response = await fetchJson('/api/auth/kimi/device/poll', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ deviceCode }),
+          }, 30000);
+        } catch (error) {
+          setStatus('info', '网络波动，正在自动重试...');
+          return { done: false, keepPolling: true };
+        }
+
+        const data = response.data || {};
+
+        if (data.status === 'authorization_pending') {
+          return { done: false, keepPolling: true };
+        }
+
+        if (data.status === 'slow_down') {
+          setStatus('info', 'Kimi 要求降低轮询频率，已自动增加等待间隔。');
+          return { done: false, keepPolling: true, increaseInterval: true };
+        }
+
+        if (data.status === 'request_timeout') {
+          return { done: false, keepPolling: true };
+        }
+
+        if (data.status === 'expired_token') {
+          setHidden(resultPanel, false);
+          resultMeta.innerHTML = '<div><strong>错误：</strong>设备码已过期，请重新发起验证。</div>';
+          setStatus('error', '设备码已过期，请重新发起验证。');
+          postBack('provider-oauth-error', 'Kimi 设备码已过期。');
+          return { done: true, keepPolling: false };
+        }
+
+        if (data.status === 'access_denied') {
+          setHidden(resultPanel, false);
+          resultMeta.innerHTML = '<div><strong>错误：</strong>授权被拒绝。</div>';
+          setStatus('error', '授权被拒绝。');
+          postBack('provider-oauth-error', 'Kimi 授权被拒绝。');
+          return { done: true, keepPolling: false };
+        }
+
+        if (data.success) {
+          authCompleted = true;
+          stopStatusPolling();
+          setHidden(resultPanel, false);
+          resultMeta.innerHTML = '<div><strong>结果：</strong>Kimi Coding 订阅验证成功！</div>';
+          setStatus('success', 'Kimi Coding 订阅验证成功！');
+          postBack('provider-oauth-success', 'Kimi Coding 订阅验证成功。');
+          return { done: true, keepPolling: false };
+        }
+
+        if (data.error) {
+          setHidden(resultPanel, false);
+          resultMeta.innerHTML = `<div><strong>错误：</strong>${data.error}</div>`;
+          setStatus('error', data.error);
+          postBack('provider-oauth-error', `Kimi 验证失败：${data.error}`);
+          return { done: true, keepPolling: false };
+        }
+
+        return { done: false, keepPolling: true };
+      }
+
+      function startPolling(deviceCode, intervalSeconds) {
+        if (!deviceCode) return;
+        if (pollTimer) clearTimeout(pollTimer);
+
+        let interval = Math.max(intervalSeconds, 5);
+
+        function scheduleNext() {
+          pollTimer = setTimeout(async () => {
+            const result = await pollDeviceFlow(deviceCode);
+            if (result.done) {
+              pollTimer = null;
+              return;
+            }
+            if (result.increaseInterval) {
+              interval = interval + 5;
+            }
+            scheduleNext();
+          }, interval * 1000);
+        }
+
+        scheduleNext();
+      }
+
+      startBtn.addEventListener('click', () => startDeviceFlow().catch(e => setStatus('error', e.message)));
+      copyBtn.addEventListener('click', async () => {
+        try { await copyText(currentUserCode); setStatus('info', '设备码已复制。'); } catch (e) { setStatus('error', '复制失败'); }
+      });
+      completeBtn.addEventListener('click', async () => {
+        if (!currentDeviceCode) { setStatus('error', '没有可用的设备码，请重新发起验证。'); return; }
+        setStatus('info', '正在检查授权结果...');
+        const result = await pollDeviceFlow(currentDeviceCode);
+        if (!result.done) { setStatus('info', 'Kimi 还没有返回授权结果，请确认已在 Kimi 页面完成授权。'); }
+      });
+      restartBtn.addEventListener('click', () => startDeviceFlow().catch(e => setStatus('error', e.message)));
+      restartResultBtn.addEventListener('click', () => startDeviceFlow().catch(e => setStatus('error', e.message)));
+      closeBtn.addEventListener('click', () => window.close());
+      window.addEventListener('beforeunload', () => { if (pollTimer) clearTimeout(pollTimer); stopStatusPolling(); });
+
+      function startStatusPolling() {
+        if (statusPollTimer) return;
+        statusPollTimer = setInterval(async () => {
+          if (authCompleted) { stopStatusPolling(); return; }
+          try {
+            const res = await fetch('/api/auth/status/kimi_coding');
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.authenticated && !data.expired) {
+              stopStatusPolling();
+              if (authCompleted) return;
+              authCompleted = true;
+              setHidden(resultPanel, false);
+              resultMeta.innerHTML = '<div><strong>结果：</strong>Kimi Coding 订阅验证成功！</div>';
+              setStatus('success', 'Kimi Coding 订阅验证成功！');
+              postBack('provider-oauth-success', 'Kimi Coding 订阅验证成功。');
+            }
+          } catch {}
+        }, 5000);
+      }
+
+      function stopStatusPolling() {
+        if (statusPollTimer) { clearInterval(statusPollTimer); statusPollTimer = null; }
+      }
+
+      async function init() {
+        try {
+          const res = await fetch('/api/auth/status/kimi_coding');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.authenticated && !data.expired) {
+              authCompleted = true;
+              setHidden(resultPanel, false);
+              resultMeta.innerHTML = '<div><strong>结果：</strong>Kimi Coding 订阅验证成功！</div>';
+              setStatus('success', 'Kimi Coding 订阅验证成功！');
+              postBack('provider-oauth-success', 'Kimi Coding 订阅验证成功。');
+              return;
+            }
+          }
+        } catch {}
+        setStatus('info', '点击下方按鈕开始申请 Kimi 设备码。');
+        startStatusPolling();
+      }
+
+      // Init
+      init();
+    </script>
+  </body>
+</html>

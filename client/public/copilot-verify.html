@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Copilot OAuth 验证</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --card: #ffffff;
+        --text: #18212f;
+        --muted: #5b6574;
+        --border: #dbe2ea;
+        --primary: #4f46e5;
+        --primary-soft: #eef1ff;
+        --success: #147d45;
+        --success-bg: #edf9f1;
+        --error: #b42318;
+        --error-bg: #fff0ee;
+        --info: #1d4ed8;
+        --info-bg: #eef4ff;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif;
+        background: linear-gradient(180deg, #f8fafc 0%, #eef3ff 100%);
+        color: var(--text);
+      }
+
+      .page {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 32px 20px 40px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+      }
+
+      .hero {
+        padding: 28px 28px 22px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .hero h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        line-height: 1.2;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .content {
+        padding: 24px 28px 28px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 18px 18px 16px;
+        background: #fff;
+      }
+
+      .panel h2 {
+        margin: 0 0 10px;
+        font-size: 17px;
+      }
+
+      .status {
+        border-radius: 14px;
+        padding: 14px 16px;
+        line-height: 1.6;
+        font-size: 14px;
+      }
+
+      .status.info { background: var(--info-bg); color: var(--info); }
+      .status.success { background: var(--success-bg); color: var(--success); }
+      .status.error { background: var(--error-bg); color: var(--error); }
+
+      .code-box {
+        margin-top: 12px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: #111827;
+        color: #f8fafc;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-align: center;
+      }
+
+      .steps {
+        margin: 10px 0 0;
+        padding-left: 20px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .meta {
+        display: grid;
+        gap: 10px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .meta strong {
+        color: var(--text);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--text);
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .btn.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .hidden { display: none; }
+
+      @media (max-width: 640px) {
+        .page { padding: 16px 12px 24px; }
+        .hero, .content { padding-left: 16px; padding-right: 16px; }
+        .code-box { font-size: 24px; letter-spacing: 0.12em; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="card">
+        <div class="hero">
+          <h1>GitHub Copilot OAuth 验证</h1>
+          <p>这个页面会通过 GitHub Device Flow 完成授权，并自动验证当前账号是否具备 Copilot 可用权限。</p>
+        </div>
+        <div class="content">
+          <div id="status" class="status info">正在检查当前 Copilot OAuth 状态…</div>
+
+          <div id="start-panel" class="panel hidden">
+            <h2>开始授权</h2>
+            <div class="hint">GitHub 设备码接口偶尔响应较慢（10-20 秒），请耐心等待。若超时提示错误，点「重试」即可，无需刷新页面。</div>
+            <div class="actions" style="margin-top: 14px;">
+              <button id="start-btn" class="btn primary" type="button">🚀 开始申请设备码</button>
+            </div>
+            <div id="start-error" class="hidden" style="margin-top:12px;">
+              <div id="start-error-msg" class="status error"></div>
+              <div class="actions" style="margin-top: 10px;">
+                <button id="retry-btn" class="btn primary" type="button">🔁 重试申请设备码</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="current-panel" class="panel hidden">
+            <h2>当前状态</h2>
+            <div id="current-meta" class="meta"></div>
+            <div class="actions" style="margin-top: 14px;">
+              <button id="restart-current-btn" class="btn" type="button">重新发起 OAuth 验证</button>
+            </div>
+          </div>
+
+          <div id="device-panel" class="panel hidden">
+            <h2>设备码授权</h2>
+            <div class="hint">先打开 GitHub 授权页，再输入下面的设备码。当前页面会自动轮询，不需要手动刷新。</div>
+            <div class="status info" style="margin-top: 12px;">
+              GitHub 上出现 “Congratulations, you're all set!” 只代表 GitHub 侧授权完成。
+              还需要回到当前这个本地验证页，等待自动检测，或点“我已完成授权，立即验证”，系统才会把 OAuth 状态写回到设置页。
+            </div>
+            <div id="device-code" class="code-box">-</div>
+            <ol class="steps">
+              <li>点击“打开 GitHub 授权页”。</li>
+              <li>在 GitHub 页面里粘贴设备码并完成授权。</li>
+              <li>回到当前页面等待自动验证完成。</li>
+            </ol>
+            <div class="actions" style="margin-top: 14px;">
+              <a id="verify-link" class="btn primary" href="#" target="_blank" rel="noreferrer">打开 GitHub 授权页</a>
+              <button id="copy-btn" class="btn" type="button">复制设备码</button>
+              <button id="complete-btn" class="btn" type="button">我已完成授权，立即验证</button>
+              <button id="restart-btn" class="btn" type="button">重新发起验证</button>
+            </div>
+          </div>
+
+          <div id="result-panel" class="panel hidden">
+            <h2>验证结果</h2>
+            <div id="result-meta" class="meta"></div>
+            <div class="actions" style="margin-top: 14px;">
+              <button id="close-btn" class="btn primary" type="button">关闭窗口</button>
+              <a class="btn" href="/">返回主页面</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const providerId = 'github_copilot';
+      const DEVICE_FLOW_STORAGE_KEY = 'github-copilot-device-flow';
+      let pollTimer = null;
+      let verificationUri = '';
+      let userCode = '';
+      let currentDeviceCode = '';
+      let currentIntervalSeconds = 5;
+      let authCompleted = false;
+      let statusPollTimer = null;
+
+      const statusEl = document.getElementById('status');
+      const startPanel = document.getElementById('start-panel');
+      const startBtn = document.getElementById('start-btn');
+      const retryBtn = document.getElementById('retry-btn');
+      const startError = document.getElementById('start-error');
+      const startErrorMsg = document.getElementById('start-error-msg');
+      const currentPanel = document.getElementById('current-panel');
+      const currentMeta = document.getElementById('current-meta');
+      const devicePanel = document.getElementById('device-panel');
+      const deviceCodeEl = document.getElementById('device-code');
+      const verifyLinkEl = document.getElementById('verify-link');
+      const copyBtn = document.getElementById('copy-btn');
+      const completeBtn = document.getElementById('complete-btn');
+      const restartBtn = document.getElementById('restart-btn');
+      const restartCurrentBtn = document.getElementById('restart-current-btn');
+      const resultPanel = document.getElementById('result-panel');
+      const resultMeta = document.getElementById('result-meta');
+      const closeBtn = document.getElementById('close-btn');
+
+      function setStatus(type, message) {
+        statusEl.className = `status ${type}`;
+        statusEl.textContent = message;
+      }
+
+      function setHidden(element, hidden) {
+        element.classList.toggle('hidden', hidden);
+      }
+
+      function setButtonsDisabled(disabled) {
+        [startBtn, retryBtn, copyBtn, completeBtn, restartBtn, restartCurrentBtn].forEach((button) => {
+          if (button) button.disabled = disabled;
+        });
+      }
+
+      function postBack(type, message) {
+        try {
+          localStorage.setItem('provider-oauth-result', JSON.stringify({
+            type,
+            providerId,
+            message,
+            ts: Date.now(),
+          }));
+        } catch {}
+
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage({ type, providerId, message }, window.location.origin);
+        }
+      }
+
+      function savePendingFlow(flow) {
+        localStorage.setItem(DEVICE_FLOW_STORAGE_KEY, JSON.stringify(flow));
+      }
+
+      function loadPendingFlow() {
+        try {
+          const raw = localStorage.getItem(DEVICE_FLOW_STORAGE_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function clearPendingFlow() {
+        localStorage.removeItem(DEVICE_FLOW_STORAGE_KEY);
+      }
+
+      async function copyText(text) {
+        if (!text) return;
+
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+          return;
+        }
+
+        const input = document.createElement('textarea');
+        input.value = text;
+        input.style.position = 'fixed';
+        input.style.opacity = '0';
+        document.body.appendChild(input);
+        input.focus();
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+      }
+
+      function renderCurrentStatus(data) {
+        setHidden(currentPanel, false);
+        currentMeta.innerHTML = `
+          <div><strong>GitHub 账号：</strong>${data.user?.login || '未知'}</div>
+          <div><strong>Copilot 状态：</strong>${data.verified ? '已验证可用' : '当前不可用'}</div>
+          <div><strong>说明：</strong>${data.verified ? '当前已存在一份可用的 Copilot OAuth 授权。' : (data.error || '当前授权存在问题，需要重新验证。')}</div>
+        `;
+      }
+
+      function renderResult(success, message, data) {
+        setHidden(resultPanel, false);
+        resultMeta.innerHTML = '';
+
+        const rows = [];
+        if (data?.user?.login) rows.push(`<div><strong>GitHub 账号：</strong>${data.user.login}</div>`);
+        if (data?.user?.html_url) rows.push(`<div><strong>主页：</strong><a href="${data.user.html_url}" target="_blank" rel="noreferrer">${data.user.html_url}</a></div>`);
+        if (data?.copilot?.expires_at) {
+          rows.push(`<div><strong>Copilot Token 过期时间：</strong>${new Date(data.copilot.expires_at * 1000).toLocaleString()}</div>`);
+        }
+        if (data?.error) rows.push(`<div><strong>错误详情：</strong>${data.error}</div>`);
+        if (data?.details) rows.push(`<div><strong>返回信息：</strong><pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;">${escapeHtml(JSON.stringify(data.details, null, 2))}</pre></div>`);
+        rows.push(`<div><strong>结果：</strong>${message}</div>`);
+        resultMeta.innerHTML = rows.join('');
+
+        setStatus(success ? 'success' : 'error', message);
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;');
+      }
+
+      async function fetchJson(url, options, timeoutMs = 15000) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(new Error('request-timeout')), timeoutMs);
+        try {
+          const response = await fetch(url, { ...(options || {}), signal: controller.signal });
+          const data = await response.json().catch(() => ({}));
+          return { ok: response.ok, data };
+        } catch (error) {
+          if (error.name === 'AbortError') {
+            throw new Error(`GitHub 请求超时（>${Math.round(timeoutMs / 1000)} 秒），请重试`);
+          }
+          throw error;
+        } finally {
+          clearTimeout(timer);
+        }
+      }
+
+      async function checkCurrentStatus() {
+        const response = await fetchJson('/api/auth/copilot/status');
+        if (!response.ok) {
+          throw new Error(response.data?.error || '无法检查当前 Copilot OAuth 状态');
+        }
+        return response.data;
+      }
+
+      async function startDeviceFlow() {
+        if (pollTimer) {
+          clearInterval(pollTimer);
+          pollTimer = null;
+        }
+
+        setHidden(resultPanel, true);
+        setHidden(devicePanel, true);
+        setHidden(startPanel, false);
+        setButtonsDisabled(true);
+        setStatus('info', '正在向 GitHub 申请设备码…');
+
+        try {
+          const response = await fetchJson('/api/auth/copilot/device/start', { method: 'POST' }, 20000);
+          if (!response.ok) {
+            throw new Error(response.data?.error || 'GitHub Device Flow 启动失败');
+          }
+
+          verificationUri = response.data.verification_uri || response.data.verification_uri_complete || '';
+          userCode = response.data.user_code || '';
+          currentDeviceCode = response.data.device_code || '';
+          currentIntervalSeconds = Number(response.data.interval) || 5;
+
+          deviceCodeEl.textContent = userCode || '-';
+          verifyLinkEl.href = verificationUri || '#';
+          setHidden(startPanel, true);
+          setHidden(devicePanel, false);
+          savePendingFlow({
+            deviceCode: currentDeviceCode,
+            intervalSeconds: currentIntervalSeconds,
+            userCode,
+            verificationUri,
+            createdAt: Date.now(),
+            expiresIn: Number(response.data.expires_in || response.data.expires_in_seconds || 900),
+          });
+
+          try {
+            await copyText(userCode);
+          } catch {}
+
+          setStatus('info', '设备码已生成。请在 GitHub 授权页完成授权，当前页面会自动继续验证。');
+          startPolling(currentDeviceCode, currentIntervalSeconds);
+        } catch (error) {
+          const msg = error.message || '申请设备码失败，请点「重试」再试一次';
+          setStatus('error', msg);
+          // 在 start-panel 内显示错误 + 重试按钮
+          startErrorMsg.textContent = '❌ ' + msg;
+          setHidden(startError, false);
+        } finally {
+          setButtonsDisabled(false);
+        }
+      }
+
+      async function pollDeviceFlow(deviceCode) {
+        let response;
+        try {
+          response = await fetchJson('/api/auth/copilot/device/poll', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ deviceCode }),
+          }, 30000);
+        } catch (error) {
+          setStatus('info', '网络波动，正在自动重试验证...');
+          return { done: false, keepPolling: true };
+        }
+
+        const data = response.data || {};
+        if (data.status === 'authorization_pending') {
+          return { done: false, keepPolling: true };
+        }
+
+        if (data.status === 'slow_down') {
+          setStatus('info', 'GitHub 要求降低轮询频率，已自动增加等待间隔。');
+          return { done: false, keepPolling: true, increaseInterval: true };
+        }
+
+        if (data.status === 'request_timeout') {
+          setStatus('info', 'GitHub 校验请求超时，当前会继续自动重试。');
+          return { done: false, keepPolling: true };
+        }
+
+        if (data.status === 'expired_token') {
+          clearPendingFlow();
+          renderResult(false, '设备码已过期，请重新发起 OAuth 验证。', data);
+          postBack('provider-oauth-error', 'GitHub Copilot OAuth 验证失败：设备码已过期。');
+          return { done: true, keepPolling: false };
+        }
+
+        if (data.success) {
+          authCompleted = true;
+          stopStatusPolling();
+          clearPendingFlow();
+          renderCurrentStatus({ authenticated: true, verified: true, user: data.user });
+          renderResult(true, `GitHub Copilot OAuth 验证成功，当前账号 @${data.user?.login || ''} 已可用。`, data);
+          postBack('provider-oauth-success', 'GitHub Copilot OAuth 验证成功。');
+          return { done: true, keepPolling: false };
+        }
+
+        if (data.authenticated) {
+          stopStatusPolling();
+          clearPendingFlow();
+          renderCurrentStatus({ authenticated: true, verified: false, user: data.user, error: data.error });
+          renderResult(false, 'GitHub OAuth 已完成并写入系统，但当前 Copilot 权限校验未通过。', data);
+          postBack('provider-oauth-updated', 'GitHub OAuth 已完成，Copilot 权限校验未通过。');
+          return { done: true, keepPolling: false };
+        }
+
+        if (!response.ok || data.error) {
+          renderResult(false, data.error || 'GitHub Copilot OAuth 验证失败。', data);
+          postBack('provider-oauth-error', `GitHub Copilot OAuth 验证失败：${data.error || '未知错误'}`);
+          return { done: true, keepPolling: false };
+        }
+
+        return { done: false, keepPolling: true };
+      }
+
+      function startPolling(deviceCode, intervalSeconds) {
+        if (!deviceCode) return;
+
+        if (pollTimer) {
+          clearTimeout(pollTimer);
+        }
+
+        let currentInterval = Math.max(intervalSeconds, 5);
+
+        function scheduleNext() {
+          pollTimer = setTimeout(async () => {
+            const result = await pollDeviceFlow(deviceCode);
+            if (result.done) {
+              pollTimer = null;
+              return;
+            }
+            if (result.increaseInterval) {
+              currentInterval = currentInterval + 5;
+            }
+            scheduleNext();
+          }, currentInterval * 1000);
+        }
+
+        scheduleNext();
+      }
+
+      function startStatusPolling() {
+        if (statusPollTimer) return;
+        statusPollTimer = setInterval(async () => {
+          if (authCompleted) { stopStatusPolling(); return; }
+          try {
+            const res = await fetch('/api/auth/status/github_copilot');
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.authenticated && !data.expired) {
+              stopStatusPolling();
+              if (authCompleted) return;
+              authCompleted = true;
+              const full = await fetchJson('/api/auth/copilot/status', {}, 15000);
+              if (full.data?.authenticated) {
+                setHidden(startPanel, true);
+                setHidden(devicePanel, true);
+                renderCurrentStatus(full.data);
+                renderResult(
+                  full.data.verified || false,
+                  full.data.verified ? 'GitHub Copilot 订阅验证成功。' : (full.data.error || '当前账号不可使用 Copilot'),
+                  full.data
+                );
+                if (full.data.verified) {
+                  postBack('provider-oauth-success', 'GitHub Copilot 订阅验证成功。');
+                } else {
+                  postBack('provider-oauth-updated', 'GitHub OAuth 已写入，Copilot 权限校验未通过。');
+                }
+              }
+            }
+          } catch {}
+        }, 6000);
+      }
+
+      function stopStatusPolling() {
+        if (statusPollTimer) { clearInterval(statusPollTimer); statusPollTimer = null; }
+      }
+
+      async function init() {
+        try {
+          const current = await checkCurrentStatus();
+          if (current.authenticated) {
+            renderCurrentStatus(current);
+            if (current.verified) {
+              authCompleted = true;
+              setStatus('success', `当前已存在可用的 Copilot OAuth 授权，账号 @${current.user?.login || ''} 已通过验证。`);
+              postBack('provider-oauth-success', 'GitHub Copilot 订阅验证成功。');
+              return;
+            }
+          }
+
+          const pending = loadPendingFlow();
+          const stillValid = pending && pending.createdAt && pending.expiresIn && (Date.now() - pending.createdAt < pending.expiresIn * 1000);
+          if (stillValid) {
+            verificationUri = pending.verificationUri || '';
+            userCode = pending.userCode || '';
+            currentDeviceCode = pending.deviceCode || '';
+            currentIntervalSeconds = Number(pending.intervalSeconds) || 5;
+            deviceCodeEl.textContent = userCode || '-';
+            verifyLinkEl.href = verificationUri || '#';
+            setHidden(startPanel, true);
+            setHidden(devicePanel, false);
+            setStatus('info', '检测到上一次未完成的设备码授权，已恢复验证状态。完成 GitHub 授权后可点“我已完成授权，立即验证”。');
+            startPolling(currentDeviceCode, currentIntervalSeconds);
+            startStatusPolling();
+            return;
+          }
+
+          clearPendingFlow();
+          setHidden(startPanel, false);
+          setStatus('info', '点击下方按钮开始申请 GitHub 设备码。');
+          startStatusPolling();
+        } catch (error) {
+          setStatus('error', error.message || '初始化 Copilot OAuth 验证页失败');
+          postBack('provider-oauth-error', error.message || '初始化 Copilot OAuth 验证页失败');
+        }
+      }
+
+      startBtn.addEventListener('click', () => {
+        setHidden(startError, true);
+        startDeviceFlow().catch((error) => {
+          setStatus('error', error.message || '申请设备码失败');
+        });
+      });
+
+      retryBtn.addEventListener('click', () => {
+        setHidden(startError, true);
+        startDeviceFlow().catch((error) => {
+          setStatus('error', error.message || '申请设备码失败');
+        });
+      });
+
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await copyText(userCode);
+          setStatus('info', '设备码已复制，可以直接粘贴到 GitHub 授权页。');
+        } catch (error) {
+          setStatus('error', error.message || '复制设备码失败');
+        }
+      });
+
+      completeBtn.addEventListener('click', async () => {
+        if (!currentDeviceCode) {
+          setStatus('error', '当前没有可用的设备码，请先重新发起 OAuth 验证。');
+          return;
+        }
+
+        setStatus('info', '正在立刻检查 GitHub 授权结果…');
+        const result = await pollDeviceFlow(currentDeviceCode);
+        if (!result.done) {
+          setStatus('info', 'GitHub 还没有返回授权结果，请确认你已经在 GitHub 页面完成授权。');
+        }
+      });
+
+      restartBtn.addEventListener('click', () => {
+        startDeviceFlow().catch((error) => {
+          setStatus('error', error.message || '重新发起验证失败');
+        });
+      });
+
+      restartCurrentBtn.addEventListener('click', () => {
+        startDeviceFlow().catch((error) => {
+          setStatus('error', error.message || '重新发起验证失败');
+        });
+      });
+
+      closeBtn.addEventListener('click', () => {
+        window.close();
+      });
+
+      window.addEventListener('beforeunload', () => {
+        if (pollTimer) clearTimeout(pollTimer);
+        stopStatusPolling();
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && currentDeviceCode) {
+          pollDeviceFlow(currentDeviceCode).catch(() => {});
+        }
+      });
+
+      init();
+    </script>
+  </body>
+</html>
