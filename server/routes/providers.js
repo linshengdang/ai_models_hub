@@ -937,6 +937,20 @@ router.post('/:id/verify', async (req, res) => {
     return res.status(404).json({ error: 'Provider not found' });
   }
 
+  const userId = userStorage.getStore()?.userId || 'guest';
+  if (userId === 'demo') {
+    return res.json({
+      success: true,
+      message: '连接验证成功 (Demo 演示模式)',
+      mode: 'mock',
+      steps: [{ title: 'Demo 自动验证', success: true, durationMs: 5 }],
+      diagnosis: {
+        status: 'healthy',
+        message: '演示模式下所有供应商连接已自动激活。'
+      }
+    });
+  }
+
   try {
     const verification = customSteps?.length
       ? await runCustomVerificationSteps(provider, customSteps)
@@ -973,7 +987,16 @@ router.post('/:id/verify-models', async (req, res) => {
     return res.status(404).json({ error: 'Provider not found' });
   }
 
+  const userId = userStorage.getStore()?.userId || 'guest';
   const models = provider.models || [];
+  if (userId === 'demo') {
+    const results = {};
+    for (const m of models) {
+      results[m.id] = { success: true, message: '工作正常 (Demo 演示模式)' };
+    }
+    return res.json({ success: true, results });
+  }
+
   const results = {};
 
   // Resolve global auth keys

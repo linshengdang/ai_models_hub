@@ -237,6 +237,24 @@ export default function ProviderManager({
   const [mcpCmds, setMcpCmds] = useState({ name: '', cmd: '', desc: '' });
   const [showMcpForm, setShowMcpForm] = useState(false);
 
+  // Auto-populate verification results for Demo mode
+  useEffect(() => {
+    const mode = localStorage.getItem('hub-user-mode');
+    if (mode === 'demo') {
+      const initialVerify = {};
+      const initialModelVerify = {};
+      Object.keys(defaults).forEach(key => {
+        initialVerify[key] = { success: true, message: '工作正常 (Demo 演示模式)' };
+        const providerModels = providers[key]?.models || defaults[key]?.models || [];
+        providerModels.forEach(m => {
+          initialModelVerify[`${key}:${m.id}`] = { success: true, message: '工作正常 (Demo 演示模式)' };
+        });
+      });
+      setVerifyResults(initialVerify);
+      setModelVerifyResults(initialModelVerify);
+    }
+  }, [providers, defaults]);
+
   // Apply inputs if parent config changes
   useEffect(() => {
     setEditGeneral(generalSettings);
@@ -852,13 +870,15 @@ export default function ProviderManager({
     } else {
       const template = defaults[key];
       if (!template) return;
+      const userMode = localStorage.getItem('hub-user-mode');
+      const initialModels = userMode === 'guest' ? [] : template.models;
       await saveProvider({
         id: key, name: template.name, baseUrl: template.baseUrl,
         authType: template.authType, authHeader: template.authHeader,
         billingType: template.billingType, apiFormat: template.apiFormat,
         loginUrl: template.loginUrl || '', docsUrl: template.docsUrl || '',
         subscriptionUrl: template.subscriptionUrl || '',
-        models: template.models, apiKey: '',
+        models: initialModels, apiKey: '',
         accessModes: template.accessModes || ['apikey'],
         oauth: template.oauth || null,
       });
@@ -894,6 +914,18 @@ export default function ProviderManager({
     if (!form?.id?.trim() || !form?.name?.trim()) return;
     await addModel(providerId, form.id.trim(), form.name.trim(), form.type || 'text');
     setAddModelForms(prev => ({ ...prev, [providerId]: null }));
+    onRefresh();
+  };
+
+  const handleAddModelWithPreset = async (providerId, presetModel) => {
+    try {
+      const res = await addModel(providerId, presetModel.id, presetModel.name, presetModel.type || 'text');
+      if (res.error) {
+        alert(res.error);
+      }
+    } catch (err) {
+      alert('添加模型失败: ' + err.message);
+    }
     onRefresh();
   };
 
@@ -2270,6 +2302,70 @@ export default function ProviderManager({
                                </div>
                                <button className="btn btn-sm btn-primary block-btn" onClick={() => handleAddModel(provider.id)} disabled={!addForm.id || !addForm.name}><CheckCircle size={14} /> 确认添加</button>
                              </div>
+                          )}
+                          
+                          {/* Default/Preset models to add */}
+                          {defaults[provider.id] && (
+                            (() => {
+                              const existingIds = new Set((provider.models || []).map(m => m.id));
+                              const availablePresets = (defaults[provider.id].models || []).filter(m => !existingIds.has(m.id));
+                              if (availablePresets.length === 0) return null;
+                              return (
+                                <div className="pc-preset-models-section" style={{
+                                  marginTop: '0px',
+                                  marginBottom: '20px',
+                                  padding: '16px',
+                                  background: 'rgba(255, 255, 255, 0.02)',
+                                  border: '1px dashed rgba(255, 255, 255, 0.08)',
+                                  borderRadius: '12px'
+                                }}>
+                                  <h5 style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#e5e7eb', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                                    <Sparkles size={14} style={{ color: '#818cf8' }} /> 推荐的预置模型列表：
+                                  </h5>
+                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    {availablePresets.map(m => {
+                                      const isGuest = localStorage.getItem('hub-user-mode') === 'guest';
+                                      const reachedLimit = isGuest && (provider.models || []).length >= 3;
+                                      return (
+                                        <button
+                                          key={m.id}
+                                          type="button"
+                                          className="btn btn-sm btn-secondary"
+                                          style={{
+                                            background: 'rgba(255, 255, 255, 0.03)',
+                                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                                            borderRadius: '8px',
+                                            padding: '6px 10px',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                            fontSize: '12px',
+                                            opacity: reachedLimit ? 0.6 : 1,
+                                            cursor: reachedLimit ? 'not-allowed' : 'pointer',
+                                            color: '#e5e7eb',
+                                            transition: 'all 0.2s'
+                                          }}
+                                          title={reachedLimit ? '游客模式单个供应商最多添加3个模型' : `添加 ${m.name}`}
+                                          onClick={() => {
+                                            if (reachedLimit) {
+                                              alert('游客限制：单个供应商最多支持 3 个模型。请注册并登录正式账号解锁无限额功能！');
+                                              return;
+                                            }
+                                            handleAddModelWithPreset(provider.id, m);
+                                          }}
+                                        >
+                                          <span style={{ fontWeight: 500 }}>{m.name}</span>
+                                          <span style={{ fontSize: '10px', opacity: 0.6, background: 'rgba(255,255,255,0.08)', padding: '2px 4px', borderRadius: '4px' }}>
+                                            {m.type === 'text' ? '文本' : m.type === 'image' ? '图片' : m.type === 'video' ? '视频' : m.type === 'audio' ? '音频' : m.type}
+                                          </span>
+                                          <Plus size={12} />
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
+                            })()
                           )}
                           
                           {types.length > 2 && (

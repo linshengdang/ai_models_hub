@@ -255,11 +255,11 @@ export function fileToBase64(file) {
   });
 }
 
-export async function registerUser(username, password) {
+export async function registerUser(username, password, confirmPassword) {
   const res = await fetch(`${API_BASE}/auth/users/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username, password, confirmPassword }),
   });
   return res.json();
 }

@@ -1807,9 +1807,12 @@ router.post('/antigravity/exchange', async (req, res) => {
 // ===== User Account Registration & Login =====
 
 router.post('/users/register', (req, res) => {
-  const { username, password } = req.body || {};
+  const { username, password, confirmPassword } = req.body || {};
   if (!username || !password) {
     return res.status(400).json({ error: '用户名和密码不能为空' });
+  }
+  if (confirmPassword !== undefined && password !== confirmPassword) {
+    return res.status(400).json({ error: '两次输入的密码不一致' });
   }
   const safeUsername = username.trim();
   if (safeUsername.length < 3) {

@@ -334,6 +334,7 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
   const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -347,9 +348,14 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
       return;
     }
 
+    if (isRegister && password !== confirmPassword) {
+      setError('两次输入的密码不一致');
+      return;
+    }
+
     try {
       if (isRegister) {
-        const res = await registerUser(username, password);
+        const res = await registerUser(username, password, confirmPassword);
         if (res.error) {
           setError(res.error);
         } else {
@@ -425,7 +431,7 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
                     <button
                       type="button"
                       className={`auth-tab-btn ${!isRegister ? 'active' : ''}`}
-                      onClick={() => { setIsRegister(false); setError(''); setSuccess(''); }}
+                      onClick={() => { setIsRegister(false); setError(''); setSuccess(''); setConfirmPassword(''); }}
                       style={{ padding: '6px 12px', fontSize: '12px' }}
                     >
                       账号登录
@@ -433,7 +439,7 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
                     <button
                       type="button"
                       className={`auth-tab-btn ${isRegister ? 'active' : ''}`}
-                      onClick={() => { setIsRegister(true); setError(''); setSuccess(''); }}
+                      onClick={() => { setIsRegister(true); setError(''); setSuccess(''); setConfirmPassword(''); }}
                       style={{ padding: '6px 12px', fontSize: '12px' }}
                     >
                       注册新账号
@@ -465,6 +471,19 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
                       style={{ padding: '8px' }}
                     />
                   </div>
+                  {isRegister && (
+                    <div className="auth-form-field" style={{ marginBottom: '12px' }}>
+                      <label style={{ fontSize: '11px' }}>确认密码</label>
+                      <input
+                        type="password"
+                        placeholder="请再次输入密码确认..."
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        required
+                        style={{ padding: '8px' }}
+                      />
+                    </div>
+                  )}
 
                   <button type="submit" className="btn btn-primary btn-auth-submit" style={{ width: '100%', padding: '8px', fontSize: '13px' }}>
                     {isRegister ? '立即注册并登录' : '登录正式账号'}

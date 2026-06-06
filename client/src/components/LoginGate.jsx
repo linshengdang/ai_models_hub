@@ -6,6 +6,7 @@ export default function LoginGate({ onLoginSuccess }) {
   const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -27,12 +28,16 @@ export default function LoginGate({ onLoginSuccess }) {
       setErrorMsg('用户名和密码不能为空');
       return;
     }
+    if (isRegister && password !== confirmPassword) {
+      setErrorMsg('两次输入的密码不一致');
+      return;
+    }
     setErrorMsg('');
     setLoading(true);
 
     try {
       if (isRegister) {
-        const res = await registerUser(username, password);
+        const res = await registerUser(username, password, confirmPassword);
         if (res.success) {
           // Auto login after registration
           const loginRes = await loginUser(username, password);
@@ -409,19 +414,19 @@ export default function LoginGate({ onLoginSuccess }) {
           <div className="auth-tabs">
             <button 
               className={`auth-tab-btn ${activeTab === 'demo' ? 'active' : ''}`}
-              onClick={() => { setActiveTab('demo'); setErrorMsg(''); }}
+              onClick={() => { setActiveTab('demo'); setErrorMsg(''); setConfirmPassword(''); }}
             >
               Demo 演示
             </button>
             <button 
               className={`auth-tab-btn ${activeTab === 'guest' ? 'active' : ''}`}
-              onClick={() => { setActiveTab('guest'); setErrorMsg(''); }}
+              onClick={() => { setActiveTab('guest'); setErrorMsg(''); setConfirmPassword(''); }}
             >
               游客模式
             </button>
             <button 
               className={`auth-tab-btn ${activeTab === 'form' ? 'active' : ''}`}
-              onClick={() => { setActiveTab('form'); setErrorMsg(''); }}
+              onClick={() => { setActiveTab('form'); setErrorMsg(''); setConfirmPassword(''); }}
             >
               注册 / 登录
             </button>
@@ -513,6 +518,19 @@ export default function LoginGate({ onLoginSuccess }) {
                 />
               </div>
 
+              {isRegister && (
+                <div className="form-group">
+                  <label className="form-label">确认密码</label>
+                  <input 
+                    type="password" 
+                    className="form-input" 
+                    placeholder="再次输入密码确认" 
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+              )}
+
               {errorMsg && <div className="error-message">{errorMsg}</div>}
 
               <button className="btn-action-primary" type="submit" disabled={loading}>
@@ -525,9 +543,9 @@ export default function LoginGate({ onLoginSuccess }) {
 
               <div className="auth-toggle-link">
                 {isRegister ? (
-                  <>已有账号？ <span onClick={() => { setIsRegister(false); setErrorMsg(''); }}>立即登录</span></>
+                  <>已有账号？ <span onClick={() => { setIsRegister(false); setErrorMsg(''); setConfirmPassword(''); }}>立即登录</span></>
                 ) : (
-                  <>没有账号？ <span onClick={() => { setIsRegister(true); setErrorMsg(''); }}>立即注册新账号</span></>
+                  <>没有账号？ <span onClick={() => { setIsRegister(true); setErrorMsg(''); setConfirmPassword(''); }}>立即注册新账号</span></>
                 )}
               </div>
             </form>
