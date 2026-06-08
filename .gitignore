@@ -4,3 +4,5 @@ server/uploads/*
 !server/uploads/.gitkeep
 .env
 *.log
+.deploy_config
+
