@@ -26,19 +26,75 @@ fi
 
 # 2. Check Node.js & NPM environment
 echo -e "\n${YELLOW}[Step 2/5] 检查 Node.js & NPM 运行环境...${NC}"
-if command -v node >/dev/null 2>&1; then
-  NODE_VER=$(node -v)
-  echo -e "${GREEN}✓ 找到 Node.js: ${NODE_VER}${NC}"
+
+# Try loading NVM if it is installed but not in current PATH (e.g. non-interactive ssh)
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  \. "$NVM_DIR/nvm.sh"
+elif [ -s "/usr/local/nvm/nvm.sh" ]; then
+  export NVM_DIR="/usr/local/nvm"
+  \. "$NVM_DIR/nvm.sh"
+fi
+
+install_node() {
+  echo -e "${YELLOW}正在尝试自动安装/升级 Node.js v20 LTS...${NC}"
+  SUDO=""
+  if [ "$(id -u)" -ne 0 ]; then
+    SUDO="sudo"
+  fi
+
+  if command -v yum >/dev/null 2>&1; then
+    echo -e "${YELLOW}检测到 CentOS/RHEL 系列系统，使用 yum 进行升级安装...${NC}"
+    $SUDO yum remove -y nodejs || true
+    curl -fsSL https://rpm.nodesource.com/setup_20.x | $SUDO bash -
+    $SUDO yum install -y nodejs
+  elif command -v apt-get >/dev/null 2>&1; then
+    echo -e "${YELLOW}检测到 Ubuntu/Debian 系列系统，使用 apt-get 进行升级安装...${NC}"
+    $SUDO apt-get remove -y nodejs || true
+    curl -fsSL https://deb.nodesource.com/setup_20.x | $SUDO bash -
+    $SUDO apt-get install -y nodejs
+  else
+    echo -e "${YELLOW}未检测到主流包管理器，尝试通过 NVM 进行自动安装...${NC}"
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    nvm install 20
+    nvm use 20
+    nvm alias default 20
+  fi
+}
+
+NEEDS_INSTALL=false
+if ! command -v node >/dev/null 2>&1; then
+  echo -e "${YELLOW}未检测到 Node.js 环境。${NC}"
+  NEEDS_INSTALL=true
 else
-  echo -e "${RED}✗ 未找到 Node.js，请先在服务器上安装 Node.js (推荐 v18+)。${NC}"
-  exit 1
+  NODE_VER=$(node -v)
+  NODE_MAJOR=$(echo "$NODE_VER" | cut -d'v' -f2 | cut -d'.' -f1)
+  echo -e "${GREEN}检测到 Node.js 当前版本: ${NODE_VER}${NC}"
+  if [ "$NODE_MAJOR" -lt 18 ]; then
+    echo -e "${YELLOW}⚠️ 当前 Node.js 版本低于 v18 (Vite 5 运行需要 v18+)，准备自动升级...${NC}"
+    NEEDS_INSTALL=true
+  fi
+fi
+
+if [ "$NEEDS_INSTALL" = true ]; then
+  install_node
+  # Check again after install
+  if command -v node >/dev/null 2>&1; then
+    NODE_VER=$(node -v)
+    echo -e "${GREEN}✓ Node.js 成功安装/升级: ${NODE_VER}${NC}"
+  else
+    echo -e "${RED}✗ 自动安装 Node.js 失败，请手动登录服务器安装 Node.js v18+。${NC}"
+    exit 1
+  fi
 fi
 
 if command -v npm >/dev/null 2>&1; then
   NPM_VER=$(npm -v)
   echo -e "${GREEN}✓ 找到 NPM: ${NPM_VER}${NC}"
 else
-  echo -e "${RED}✗ 未找到 NPM，请先安装 Node.js npm 依赖。${NC}"
+  echo -e "${RED}✗ 未找到 NPM，请检查 Node.js 安装状态。${NC}"
   exit 1
 fi
 
