@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { loginUser, registerUser } from '../api';
 
-export default function LoginGate({ onLoginSuccess }) {
+export default function LoginGate({ onLoginSuccess, showToast }) {
   const [activeTab, setActiveTab] = useState('demo'); // 'demo' | 'guest' | 'form'
   const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState('');
@@ -14,12 +14,14 @@ export default function LoginGate({ onLoginSuccess }) {
     localStorage.setItem('hub-user-id', 'demo');
     localStorage.setItem('hub-user-mode', 'demo');
     onLoginSuccess('DemoUser', 'demo');
+    showToast?.('成功进入 Demo 演示空间！', 'success');
   };
 
   const handleGuestEntry = () => {
     localStorage.setItem('hub-user-id', 'guest');
     localStorage.setItem('hub-user-mode', 'guest');
     onLoginSuccess('GuestUser', 'guest');
+    showToast?.('成功以游客身份进入空间！', 'success');
   };
 
   const handleAuthSubmit = async (e) => {
@@ -45,6 +47,7 @@ export default function LoginGate({ onLoginSuccess }) {
             localStorage.setItem('hub-user-id', loginRes.username);
             localStorage.setItem('hub-user-mode', 'user');
             onLoginSuccess(loginRes.username, 'user');
+            showToast?.('注册成功，并已自动登录！', 'success');
           } else {
             setErrorMsg('注册成功，但登录失败：' + (loginRes.error || '未知错误'));
           }
@@ -57,6 +60,7 @@ export default function LoginGate({ onLoginSuccess }) {
           localStorage.setItem('hub-user-id', res.username);
           localStorage.setItem('hub-user-mode', 'user');
           onLoginSuccess(res.username, 'user');
+          showToast?.('登录成功！', 'success');
         } else {
           setErrorMsg(res.error || '用户名或密码错误');
         }

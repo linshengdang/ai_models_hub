@@ -190,7 +190,8 @@ export default function ProviderManager({
   terminalSettings,
   setTerminalSettings,
   privacySettings,
-  setPrivacySettings
+  setPrivacySettings,
+  showToast
 }) {
   // Navigation active tab
   const [activeTab, setActiveTab] = useState(initialTab || 'general');
@@ -647,6 +648,7 @@ export default function ProviderManager({
       const result = await startCopilotDeviceFlow();
       if (result.error || !result.device_code) {
         updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || '设备码申请失败') });
+        showToast?.('申请设备码失败：' + (result.error || ''), 'error');
         return;
       }
       updateSpecialVerifyDialog({
@@ -661,8 +663,10 @@ export default function ProviderManager({
         done: false,
         pollPaused: false,
       });
+      showToast?.('GitHub 设备码申请成功！', 'success');
     } catch (error) {
       updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, '设备码申请失败') });
+      showToast?.('申请设备码异常，请检查网络。', 'error');
     } finally {
       updateSpecialVerifyDialog({ starting: false });
     }
@@ -735,6 +739,7 @@ export default function ProviderManager({
       const result = await startCodexOAuth();
       if (result.error || !result.url) {
         updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || '授权链接生成失败') });
+        showToast?.('授权链接生成失败：' + (result.error || ''), 'error');
         return;
       }
       updateSpecialVerifyDialog({
@@ -745,8 +750,10 @@ export default function ProviderManager({
         expiresAt: Date.now() + 10 * 60 * 1000,
         callbackUrl: '',
       });
+      showToast?.('授权链接生成成功，请在外部完成授权！', 'success');
     } catch (error) {
       updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, '授权链接生成失败') });
+      showToast?.('生成授权链接失败，网络请求异常。', 'error');
     } finally {
       updateSpecialVerifyDialog({ starting: false });
     }
@@ -756,6 +763,7 @@ export default function ProviderManager({
     const callbackUrl = specialVerifyDialog?.callbackUrl?.trim();
     if (!callbackUrl) {
       updateSpecialVerifyDialog({ error: '请粘贴完整 callback URL。' });
+      showToast?.('请粘贴完整 callback URL！', 'error');
       return;
     }
 
@@ -764,13 +772,20 @@ export default function ProviderManager({
       const result = await exchangeCodexCallback(callbackUrl);
       if (!result.success) {
         updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || 'Codex OAuth token 交换失败'), exchangeResult: result });
+        showToast?.('授权令牌交换失败：' + formatAuthError(result.error || 'Codex OAuth token 交换失败'), 'error');
         return;
       }
       updateSpecialVerifyDialog({ status: 'success', message: 'OAuth token 已写入，正在验证 Codex 接口...', exchangeResult: result });
+      showToast?.('授权令牌保存成功，正在验证接口...', 'success');
       await onRefresh();
+      
+      const nextStatus = await getOAuthStatus('openai_codex');
+      updateSpecialVerifyDialog({ authStatus: nextStatus });
+
       await runInlineProviderVerify('openai_codex');
     } catch (error) {
       updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, 'Codex OAuth token 交换失败') });
+      showToast?.('授权令牌保存异常。', 'error');
     } finally {
       updateSpecialVerifyDialog({ exchanging: false });
     }
@@ -782,6 +797,7 @@ export default function ProviderManager({
       const result = await startAntigravityOAuth();
       if (result.error || !result.url) {
         updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || '授权链接生成失败') });
+        showToast?.('授权链接生成失败：' + (result.error || ''), 'error');
         return;
       }
       updateSpecialVerifyDialog({
@@ -792,8 +808,10 @@ export default function ProviderManager({
         expiresAt: Date.now() + 10 * 60 * 1000,
         callbackUrl: '',
       });
+      showToast?.('授权链接生成成功，请在外部完成授权！', 'success');
     } catch (error) {
       updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, '授权链接生成失败') });
+      showToast?.('生成授权链接失败，网络请求异常。', 'error');
     } finally {
       updateSpecialVerifyDialog({ starting: false });
     }
@@ -803,6 +821,7 @@ export default function ProviderManager({
     const callbackUrl = specialVerifyDialog?.callbackUrl?.trim();
     if (!callbackUrl) {
       updateSpecialVerifyDialog({ error: '请粘贴完整 callback URL。' });
+      showToast?.('请粘贴完整 callback URL！', 'error');
       return;
     }
 
@@ -811,13 +830,20 @@ export default function ProviderManager({
       const result = await exchangeAntigravityCallback(callbackUrl);
       if (!result.success) {
         updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || 'Antigravity OAuth token 交换失败'), exchangeResult: result });
+        showToast?.('模拟授权写入失败：' + formatAuthError(result.error || 'Antigravity OAuth token 交换失败'), 'error');
         return;
       }
       updateSpecialVerifyDialog({ status: 'success', message: 'OAuth token 已写入，正在验证 Antigravity 接口...', exchangeResult: result });
+      showToast?.('模拟授权保存成功，正在验证接口...', 'success');
       await onRefresh();
+      
+      const nextStatus = await getOAuthStatus('antigravity');
+      updateSpecialVerifyDialog({ authStatus: nextStatus });
+
       await runInlineProviderVerify('antigravity');
     } catch (error) {
       updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, 'Antigravity OAuth token 交换失败') });
+      showToast?.('模拟授权保存异常。', 'error');
     } finally {
       updateSpecialVerifyDialog({ exchanging: false });
     }
@@ -850,71 +876,106 @@ export default function ProviderManager({
     const form = editForms[id];
     if (!form) return;
     const provider = providers[id];
-    await saveProvider({
-      ...provider,
-      baseUrl: form.baseUrl,
-      authType: form.authType,
-      authHeader: form.authHeader,
-      apiFormat: form.apiFormat,
-      billingType: form.billingType,
-    });
-    onRefresh();
+    try {
+      await saveProvider({
+        ...provider,
+        baseUrl: form.baseUrl,
+        authType: form.authType,
+        authHeader: form.authHeader,
+        apiFormat: form.apiFormat,
+        billingType: form.billingType,
+      });
+      onRefresh();
+      showToast?.('配置保存成功！', 'success');
+    } catch (e) {
+      showToast?.('保存配置失败：' + e.message, 'error');
+    }
   };
 
   const handleToggleDefault = async (key) => {
     if (providers[key]) {
       if (!confirm('确定要移除供应商 ' + (providers[key].name || key) + ' 吗？')) return;
-      await deleteProvider(key);
-      if (selectedId === key) setSelectedId(null);
-      onRefresh();
+      try {
+        await deleteProvider(key);
+        if (selectedId === key) setSelectedId(null);
+        onRefresh();
+        showToast?.('已移除供应商 ' + (providers[key]?.name || key), 'info');
+      } catch (e) {
+        showToast?.('移除失败：' + e.message, 'error');
+      }
     } else {
       const template = defaults[key];
       if (!template) return;
       const userMode = localStorage.getItem('hub-user-mode');
       const initialModels = userMode === 'guest' ? [] : template.models;
-      await saveProvider({
-        id: key, name: template.name, baseUrl: template.baseUrl,
-        authType: template.authType, authHeader: template.authHeader,
-        billingType: template.billingType, apiFormat: template.apiFormat,
-        loginUrl: template.loginUrl || '', docsUrl: template.docsUrl || '',
-        subscriptionUrl: template.subscriptionUrl || '',
-        models: initialModels, apiKey: '',
-        accessModes: template.accessModes || ['apikey'],
-        oauth: template.oauth || null,
-      });
-      await onRefresh();
-      selectProvider(key);
+      try {
+        await saveProvider({
+          id: key, name: template.name, baseUrl: template.baseUrl,
+          authType: template.authType, authHeader: template.authHeader,
+          billingType: template.billingType, apiFormat: template.apiFormat,
+          loginUrl: template.loginUrl || '', docsUrl: template.docsUrl || '',
+          subscriptionUrl: template.subscriptionUrl || '',
+          models: initialModels, apiKey: '',
+          accessModes: template.accessModes || ['apikey'],
+          oauth: template.oauth || null,
+        });
+        await onRefresh();
+        selectProvider(key);
+        showToast?.('成功添加供应商 ' + template.name, 'success');
+      } catch (e) {
+        showToast?.('添加失败：' + e.message, 'error');
+      }
     }
   };
 
   const handleSaveKey = async (id) => {
     const key = apiKeyInputs[id];
     if (!key?.trim()) return;
-    await updateApiKey(id, key.trim());
-    setApiKeyInputs(prev => ({ ...prev, [id]: '' }));
-    onRefresh();
+    try {
+      await updateApiKey(id, key.trim());
+      setApiKeyInputs(prev => ({ ...prev, [id]: '' }));
+      onRefresh();
+      showToast?.('API Key 保存成功！', 'success');
+    } catch (e) {
+      showToast?.('API Key 保存失败：' + e.message, 'error');
+    }
   };
 
   const handleSaveModelKey = async (providerId, modelId) => {
     const inputKey = providerId + ':' + modelId;
     const key = modelKeyInputs[inputKey];
     if (!key?.trim()) return;
-    await updateModelKey(providerId, modelId, key.trim());
-    setModelKeyInputs(prev => ({ ...prev, [inputKey]: '' }));
-    onRefresh();
+    try {
+      await updateModelKey(providerId, modelId, key.trim());
+      setModelKeyInputs(prev => ({ ...prev, [inputKey]: '' }));
+      onRefresh();
+      showToast?.('模型专属 Key 保存成功！', 'success');
+    } catch (e) {
+      showToast?.('专属 Key 保存失败：' + e.message, 'error');
+    }
   };
 
   const handleDeleteModelKey = async (providerId, modelId) => {
-    await updateModelKey(providerId, modelId, '');
-    onRefresh();
+    try {
+      await updateModelKey(providerId, modelId, '');
+      onRefresh();
+      showToast?.('已清除专属 Key，还原为使用全局 Key！', 'info');
+    } catch (e) {
+      showToast?.('操作失败：' + e.message, 'error');
+    }
   };
 
   const handleAddModel = async (providerId) => {
     const form = addModelForms[providerId];
     if (!form?.id?.trim() || !form?.name?.trim()) return;
-    await addModel(providerId, form.id.trim(), form.name.trim(), form.type || 'text');
-    setAddModelForms(prev => ({ ...prev, [providerId]: null }));
-    onRefresh();
+    try {
+      await addModel(providerId, form.id.trim(), form.name.trim(), form.type || 'text');
+      setAddModelForms(prev => ({ ...prev, [providerId]: null }));
+      onRefresh();
+      showToast?.('模型添加成功！', 'success');
+    } catch (e) {
+      showToast?.('添加模型失败：' + e.message, 'error');
+    }
   };
 
   const handleAddModelWithPreset = async (providerId, presetModel) => {
@@ -922,24 +983,38 @@ export default function ProviderManager({
       const res = await addModel(providerId, presetModel.id, presetModel.name, presetModel.type || 'text');
       if (res.error) {
         alert(res.error);
+        showToast?.('添加模型失败：' + res.error, 'error');
+      } else {
+        showToast?.(`已成功添加模型 ${presetModel.name}！`, 'success');
       }
     } catch (err) {
       alert('添加模型失败: ' + err.message);
+      showToast?.('添加模型失败：' + err.message, 'error');
     }
     onRefresh();
   };
 
   const handleRemoveModel = async (providerId, modelId, modelName) => {
     if (!confirm('确定要删除模型 ' + modelName + ' 吗？')) return;
-    await removeModel(providerId, modelId);
-    onRefresh();
+    try {
+      await removeModel(providerId, modelId);
+      onRefresh();
+      showToast?.(`已删除模型 ${modelName}`, 'info');
+    } catch (e) {
+      showToast?.('删除模型失败：' + e.message, 'error');
+    }
   };
 
   const handleDelete = async (id) => {
     if (!confirm('确定要删除供应商 ' + (providers[id]?.name || id) + ' 吗？')) return;
-    await deleteProvider(id);
-    if (selectedId === id) setSelectedId(null);
-    onRefresh();
+    try {
+      await deleteProvider(id);
+      if (selectedId === id) setSelectedId(null);
+      onRefresh();
+      showToast?.('供应商删除成功！', 'info');
+    } catch (e) {
+      showToast?.('删除供应商失败：' + e.message, 'error');
+    }
   };
 
   const handleVerify = (id) => {
@@ -980,10 +1055,16 @@ export default function ProviderManager({
       setVerifyResults(prev => ({ ...prev, [verifyDialog.providerId]: result }));
       setVerifyDialog({ providerId: verifyDialog.providerId, result });
       setVerifyDialogInputs((result.steps || []).map(step => JSON.stringify(toEditableVerifyStep(step), null, 2)));
+      if (result.success) {
+        showToast?.('供应商接口连接验证成功！', 'success');
+      } else {
+        showToast?.('连接验证未通过，请检查配置或 API Key！', 'error');
+      }
     } catch (error) {
       const result = { success: false, message: error.message, steps: [] };
       setVerifyResults(prev => ({ ...prev, [verifyDialog.providerId]: result }));
       setVerifyDialog({ providerId: verifyDialog.providerId, result });
+      showToast?.('接口验证错误：' + error.message, 'error');
     } finally {
       setLoading(prev => ({ ...prev, [verifyDialog.providerId + ':dialog']: false }));
     }
@@ -993,6 +1074,8 @@ export default function ProviderManager({
     const activeKeys = keys.filter(k => !!providers[k]);
     if (activeKeys.length === 0) return;
 
+    showToast?.('开始验证该分类下所有已配置的供应商接口连接...', 'info');
+
     setLoading(prev => {
       const next = { ...prev };
       activeKeys.forEach(k => {
@@ -1001,10 +1084,12 @@ export default function ProviderManager({
       return next;
     });
 
+    let successCount = 0;
     for (const key of activeKeys) {
       try {
         const result = await verifyProvider(key, {});
         setVerifyResults(prev => ({ ...prev, [key]: result }));
+        if (result.success) successCount++;
       } catch (error) {
         setVerifyResults(prev => ({
           ...prev,
@@ -1014,6 +1099,29 @@ export default function ProviderManager({
         setLoading(prev => ({ ...prev, [key]: false }));
       }
     }
+    showToast?.(`一键连接验证完成！成功: ${successCount}/${activeKeys.length}`, 'success');
+  };
+
+  const handleVerifyCategoryModels = async (keys) => {
+    const activeKeys = keys.filter(k => !!providers[k] && providers[k].models && providers[k].models.length > 0);
+    if (activeKeys.length === 0) {
+      showToast?.('当前分类没有可供验证的模型！', 'warning');
+      return;
+    }
+
+    showToast?.('开始一键验证该分类下所有已配置供应商的模型可用性...', 'info');
+
+    await Promise.all(
+      activeKeys.map(async (key) => {
+        try {
+          await handleVerifyModels(key);
+        } catch (error) {
+          console.error(`Error verifying models for ${key}:`, error);
+        }
+      })
+    );
+
+    showToast?.('该分类下所有供应商的模型验证完成！', 'success');
   };
 
   const handleVerifyModels = async (providerId) => {
@@ -1043,6 +1151,7 @@ export default function ProviderManager({
           });
           return next;
         });
+        showToast?.(`${provider.name} 所有模型可用性验证完成！`, 'success');
       } else {
         throw new Error(result.error || '验证请求未成功返回数据');
       }
@@ -1058,6 +1167,7 @@ export default function ProviderManager({
         });
         return next;
       });
+      showToast?.('验证模型失败：' + error.message, 'error');
     } finally {
       setLoading(prev => ({ ...prev, [providerId + ':models']: false }));
     }
@@ -1139,6 +1249,7 @@ export default function ProviderManager({
     setPrivacySettings(editPrivacy);
     
     if (!silent) {
+      showToast?.('全局设置保存成功！', 'success');
       setShowSavedMsg(true);
       setTimeout(() => setShowSavedMsg(false), 2000);
     }
@@ -1250,12 +1361,12 @@ export default function ProviderManager({
         }
         return tool;
       }));
-      alert('扫描完毕！已自动匹配 Gradle, Maven, make 命令行环境，并更新其检测版本。');
+      showToast?.('系统环境扫描完毕，已自动更新 CLI 挂载版本！', 'success');
     }, 1500);
   };
 
   const handleInstallToPath = () => {
-    alert('已成功将 walicode 命令工具链接安装到您的终端系统环境 PATH 路径（/usr/local/bin/walicode）。现在可以直接在终端中运行 walicode。');
+    showToast?.('walicode 命令行工具成功安装至终端系统环境 PATH 路径！', 'success');
   };
 
   const handleAddCliTool = () => {
@@ -1276,6 +1387,7 @@ export default function ProviderManager({
       category: 'BUILD'
     };
     setEditCli(prev => [...prev, newTool]);
+    showToast?.('自定义工具已添加，请点击保存生效！', 'info');
   };
 
   // MCP service Handlers
@@ -1291,6 +1403,7 @@ export default function ProviderManager({
     setEditMcp(prev => [...prev, newMcp]);
     setMcpCmds({ name: '', cmd: '', desc: '' });
     setShowMcpForm(false);
+    showToast?.('自定义 MCP 服务挂载并启动成功！', 'success');
   };
 
   const handleDeleteMcp = (id) => {
@@ -2011,18 +2124,33 @@ export default function ProviderManager({
                                 {(() => {
                                   const keys = configuredCommon.map(([k]) => k);
                                   const isCategoryLoading = keys.some(k => loading[k]);
+                                  const isCategoryModelsLoading = keys.some(k => loading[k + ':models']);
                                   return (
-                                    <button 
-                                      className="pm-category-verify-btn" 
-                                      disabled={isCategoryLoading}
-                                      onClick={(e) => { 
-                                        e.stopPropagation(); 
-                                        handleVerifyCategory(keys); 
-                                      }}
-                                    >
-                                      {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
-                                      {isCategoryLoading ? '验证中...' : '一键验证'}
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                      <button 
+                                        className="pm-category-verify-btn" 
+                                        disabled={isCategoryLoading}
+                                        onClick={(e) => { 
+                                          e.stopPropagation(); 
+                                          handleVerifyCategory(keys); 
+                                        }}
+                                      >
+                                        {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
+                                        {isCategoryLoading ? '验证中...' : '一键验证链接'}
+                                      </button>
+                                      <button 
+                                        className="pm-category-verify-btn" 
+                                        disabled={isCategoryModelsLoading}
+                                        onClick={(e) => { 
+                                          e.stopPropagation(); 
+                                          handleVerifyCategoryModels(keys); 
+                                        }}
+                                        style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}
+                                      >
+                                        {isCategoryModelsLoading ? <Loader size={10} className="spin" /> : <Sparkles size={10} />}
+                                        {isCategoryModelsLoading ? '验证中...' : '一键验证模型'}
+                                      </button>
+                                    </div>
                                   );
                                 })()}
                               </div>
@@ -2040,19 +2168,34 @@ export default function ProviderManager({
                                   const keys = globalCommon.map(([k]) => k);
                                   const activeKeys = keys.filter(k => !!providers[k]);
                                   const isCategoryLoading = keys.some(k => loading[k]);
+                                  const isCategoryModelsLoading = keys.some(k => loading[k + ':models']);
                                   if (activeKeys.length === 0) return null;
                                   return (
-                                    <button 
-                                      className="pm-category-verify-btn" 
-                                      disabled={isCategoryLoading}
-                                      onClick={(e) => { 
-                                        e.stopPropagation(); 
-                                        handleVerifyCategory(keys); 
-                                      }}
-                                    >
-                                      {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
-                                      {isCategoryLoading ? '验证中...' : '一键验证'}
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                      <button 
+                                        className="pm-category-verify-btn" 
+                                        disabled={isCategoryLoading}
+                                        onClick={(e) => { 
+                                          e.stopPropagation(); 
+                                          handleVerifyCategory(keys); 
+                                        }}
+                                      >
+                                        {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
+                                        {isCategoryLoading ? '验证中...' : '一键验证链接'}
+                                      </button>
+                                      <button 
+                                        className="pm-category-verify-btn" 
+                                        disabled={isCategoryModelsLoading}
+                                        onClick={(e) => { 
+                                          e.stopPropagation(); 
+                                          handleVerifyCategoryModels(keys); 
+                                        }}
+                                        style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}
+                                      >
+                                        {isCategoryModelsLoading ? <Loader size={10} className="spin" /> : <Sparkles size={10} />}
+                                        {isCategoryModelsLoading ? '验证中...' : '一键验证模型'}
+                                      </button>
+                                    </div>
                                   );
                                 })()}
                               </div>
@@ -2070,19 +2213,34 @@ export default function ProviderManager({
                                   const keys = domesticCommon.map(([k]) => k);
                                   const activeKeys = keys.filter(k => !!providers[k]);
                                   const isCategoryLoading = keys.some(k => loading[k]);
+                                  const isCategoryModelsLoading = keys.some(k => loading[k + ':models']);
                                   if (activeKeys.length === 0) return null;
                                   return (
-                                    <button 
-                                      className="pm-category-verify-btn" 
-                                      disabled={isCategoryLoading}
-                                      onClick={(e) => { 
-                                        e.stopPropagation(); 
-                                        handleVerifyCategory(keys); 
-                                      }}
-                                    >
-                                      {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
-                                      {isCategoryLoading ? '验证中...' : '一键验证'}
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                      <button 
+                                        className="pm-category-verify-btn" 
+                                        disabled={isCategoryLoading}
+                                        onClick={(e) => { 
+                                          e.stopPropagation(); 
+                                          handleVerifyCategory(keys); 
+                                        }}
+                                      >
+                                        {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
+                                        {isCategoryLoading ? '验证中...' : '一键验证链接'}
+                                      </button>
+                                      <button 
+                                        className="pm-category-verify-btn" 
+                                        disabled={isCategoryModelsLoading}
+                                        onClick={(e) => { 
+                                          e.stopPropagation(); 
+                                          handleVerifyCategoryModels(keys); 
+                                        }}
+                                        style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}
+                                      >
+                                        {isCategoryModelsLoading ? <Loader size={10} className="spin" /> : <Sparkles size={10} />}
+                                        {isCategoryModelsLoading ? '验证中...' : '一键验证模型'}
+                                      </button>
+                                    </div>
                                   );
                                 })()}
                               </div>
@@ -2100,19 +2258,34 @@ export default function ProviderManager({
                                   const keys = others.map(([k]) => k);
                                   const activeKeys = keys.filter(k => !!providers[k]);
                                   const isCategoryLoading = keys.some(k => loading[k]);
+                                  const isCategoryModelsLoading = keys.some(k => loading[k + ':models']);
                                   if (activeKeys.length === 0) return null;
                                   return (
-                                    <button 
-                                      className="pm-category-verify-btn" 
-                                      disabled={isCategoryLoading}
-                                      onClick={(e) => { 
-                                        e.stopPropagation(); 
-                                        handleVerifyCategory(keys); 
-                                      }}
-                                    >
-                                      {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
-                                      {isCategoryLoading ? '验证中...' : '一键验证'}
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                      <button 
+                                        className="pm-category-verify-btn" 
+                                        disabled={isCategoryLoading}
+                                        onClick={(e) => { 
+                                          e.stopPropagation(); 
+                                          handleVerifyCategory(keys); 
+                                        }}
+                                      >
+                                        {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
+                                        {isCategoryLoading ? '验证中...' : '一键验证链接'}
+                                      </button>
+                                      <button 
+                                        className="pm-category-verify-btn" 
+                                        disabled={isCategoryModelsLoading}
+                                        onClick={(e) => { 
+                                          e.stopPropagation(); 
+                                          handleVerifyCategoryModels(keys); 
+                                        }}
+                                        style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}
+                                      >
+                                        {isCategoryModelsLoading ? <Loader size={10} className="spin" /> : <Sparkles size={10} />}
+                                        {isCategoryModelsLoading ? '验证中...' : '一键验证模型'}
+                                      </button>
+                                    </div>
                                   );
                                 })()}
                               </div>
@@ -2465,7 +2638,7 @@ export default function ProviderManager({
                     {specialVerifyDialog.verifying ? <Loader size={14} className="spin" /> : <Shield size={14} />} 验证接口
                   </button>
                 )}
-                {(specialVerifyDialog.providerId === 'openai_codex' || specialVerifyDialog.providerId === 'antigravity') && specialVerifyDialog.authStatus?.authenticated && !specialVerifyDialog.authStatus?.expired && (
+                {(specialVerifyDialog.providerId === 'openai_codex' || specialVerifyDialog.providerId === 'antigravity') && (
                   <button className="btn btn-sm btn-secondary" onClick={() => runInlineProviderVerify(specialVerifyDialog.providerId)} disabled={specialVerifyDialog.verifying}>
                     {specialVerifyDialog.verifying ? <Loader size={14} className="spin" /> : <Shield size={14} />} 验证接口
                   </button>

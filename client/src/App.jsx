@@ -62,6 +62,15 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(() => localStorage.getItem('hub-user-id') || 'guest');
   const [currentUserMode, setCurrentUserMode] = useState(() => localStorage.getItem('hub-user-mode') || null);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [toasts, setToasts] = useState([]);
+
+  const showToast = (message, type = 'success') => {
+    const id = Date.now() + Math.random().toString(36).substr(2, 9);
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 3000);
+  };
 
   // Loaded setting states from localStorage (Mocked or persisted)
   const [generalSettings, setGeneralSettings] = useState(() => {
@@ -209,6 +218,7 @@ export default function App() {
           setCurrentUserMode(mode);
           loadProviders();
         }}
+        showToast={showToast}
       />
     );
   }
@@ -293,6 +303,7 @@ export default function App() {
               setTerminalSettings={setTerminalSettings}
               privacySettings={privacySettings}
               setPrivacySettings={setPrivacySettings}
+              showToast={showToast}
             />
           )}
           {page === 'chat' && (
@@ -324,13 +335,44 @@ export default function App() {
           onRefresh={loadProviders}
           setSelectedProvider={setSelectedProvider}
           setSelectedModel={setSelectedModel}
+          showToast={showToast}
         />
       )}
+      
+      {/* Toast notifications */}
+      <div className="toast-container">
+        {toasts.map(t => (
+          <div key={t.id} className={`toast-item toast-${t.type}`}>
+            <span className="toast-icon">
+              {t.type === 'success' && (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+              {t.type === 'error' && (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="15" y1="9" x2="9" y2="15" />
+                  <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+              )}
+              {t.type === 'info' && (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+              )}
+            </span>
+            <div className="toast-message">{t.message}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUserMode, onClose, onRefresh, setSelectedProvider, setSelectedModel }) {
+function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUserMode, onClose, onRefresh, setSelectedProvider, setSelectedModel, showToast }) {
   const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -363,8 +405,10 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
         const res = await registerUser(username, password, confirmPassword);
         if (res.error) {
           setError(res.error);
+          showToast?.('注册失败：' + res.error, 'error');
         } else {
           setSuccess('注册成功，请选择登录账号！');
+          showToast?.('账号注册成功，请在此登录！', 'success');
           setIsRegister(false);
           setPassword('');
         }
@@ -372,6 +416,7 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
         const res = await loginUser(username, password);
         if (res.error) {
           setError(res.error);
+          showToast?.('登录失败：' + res.error, 'error');
         } else {
           localStorage.setItem('hub-user-id', res.username);
           localStorage.setItem('hub-user-mode', 'user');
@@ -379,12 +424,14 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
           setCurrentUserMode('user');
           setSelectedProvider('');
           setSelectedModel('');
+          showToast?.('欢迎回来，登录成功！', 'success');
           await onRefresh();
           onClose();
         }
       }
     } catch (err) {
       setError(err.message || '操作失败，请重试');
+      showToast?.('操作异常：' + err.message, 'error');
     }
   };
 
@@ -410,8 +457,10 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
       const res = await changePassword(currentUser, oldPassword, newPassword);
       if (res.error) {
         setError(res.error);
+        showToast?.('修改密码失败：' + res.error, 'error');
       } else {
         setSuccess('密码修改成功！');
+        showToast?.('密码修改成功！', 'success');
         setOldPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
@@ -423,6 +472,7 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
       }
     } catch (err) {
       setError(err.message || '操作失败，请重试');
+      showToast?.('修改密码出错：' + err.message, 'error');
     }
   };
 
@@ -433,6 +483,7 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
     setCurrentUserMode(null);
     setSelectedProvider('');
     setSelectedModel('');
+    showToast?.('已成功退出当前登录状态！', 'info');
     await onRefresh();
     onClose();
   };
