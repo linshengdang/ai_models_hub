@@ -93,14 +93,6 @@ GOOGLE_API_KEY=your_gemini_key
 DEEPSEEK_API_KEY=your_deepseek_key
 DASHSCOPE_API_KEY=your_qwen_key
 ```
-
-### 配置文件隐私安全性
-为了保护密钥安全，`.gitignore` 已经排除以下敏感用户配置文件，它们**绝对不会**被推送到公共 Git 仓库：
-- `server/data/config_*.json` (用户本地保存的配置)
-- `server/data/users.json` (用户加密密码及权限)
-- `server/data/oauth-state.json` (OAuth 登录会话状态)
-- `server/data/stats.json` (接口调用统计数据)
-
 ---
 
 ## 📖 运行与使用指南
@@ -124,3 +116,11 @@ DASHSCOPE_API_KEY=your_qwen_key
    - Override Base URL 填写：`http://<您的服务器IP>:3001/v1`。
    - API Key 填写：`sk-spacedream-dddd` (以实际用户名为准)。
    - 勾选或添加您想要调用的模型（如同名模型可使用 `github_copilot-gpt-4o` 形式）。
+
+---
+
+## 👥 作者与联系方式
+
+- **作者**：linshengdang (SpaceDream)
+- **联系方式 (QQ)**：44210509
+- **说明**：如果您在使用、部署或二次开发中遇到任何问题，欢迎通过 QQ 与我联系交流。
