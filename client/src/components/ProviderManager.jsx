@@ -211,6 +211,7 @@ export default function ProviderManager({
   const [addModelForms, setAddModelForms] = useState({});
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [specialVerifyDialog, setSpecialVerifyDialog] = useState(null);
+  const [categoryProgress, setCategoryProgress] = useState(null);
   const [providerSearch, setProviderSearch] = useState('');
   const [othersExpanded, setOthersExpanded] = useState(false);
   const [globalExpanded, setGlobalExpanded] = useState(false);
@@ -572,7 +573,7 @@ export default function ProviderManager({
 
   const openInlineProviderVerify = async (providerId) => {
     setSelectedId(providerId);
-    setSpecialVerifyDialog({ providerId, status: 'checking', message: '正在读取授权状态...', error: '', providerVerifyResult: null });
+    setSpecialVerifyDialog({ providerId, status: 'checking', message: '正在读取授权状态...', error: '', providerVerifyResult: null, step1Success: '', step1Error: '' });
 
     try {
       if (providerId === 'github_copilot') {
@@ -584,6 +585,8 @@ export default function ProviderManager({
           error: status.verified ? '' : (status.error || ''),
           copilotStatus: status,
           providerVerifyResult: null,
+          step1Success: '',
+          step1Error: ''
         });
         return;
       }
@@ -599,9 +602,11 @@ export default function ProviderManager({
         authStatus: status,
         callbackUrl: '',
         providerVerifyResult: null,
+        step1Success: '',
+        step1Error: ''
       });
     } catch (error) {
-      setSpecialVerifyDialog({ providerId, status: 'error', message: '', error: formatAuthError(error), providerVerifyResult: null });
+      setSpecialVerifyDialog({ providerId, status: 'error', message: '', error: formatAuthError(error), providerVerifyResult: null, step1Success: '', step1Error: formatAuthError(error) });
     }
   };
 
@@ -643,11 +648,13 @@ export default function ProviderManager({
       done: false,
       pollPaused: true,
       polling: false,
+      step1Success: '',
+      step1Error: ''
     });
     try {
       const result = await startCopilotDeviceFlow();
       if (result.error || !result.device_code) {
-        updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || '设备码申请失败') });
+        updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || '设备码申请失败'), step1Error: formatAuthError(result.error || '设备码申请失败') });
         showToast?.('申请设备码失败：' + (result.error || ''), 'error');
         return;
       }
@@ -662,11 +669,12 @@ export default function ProviderManager({
         expiresAt: Date.now() + Number(result.expires_in || 900) * 1000,
         done: false,
         pollPaused: false,
+        step1Success: '设备码申请成功！请在下方第 2 步中完成授权。'
       });
       showToast?.('GitHub 设备码申请成功！', 'success');
     } catch (error) {
-      updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, '设备码申请失败') });
-      showToast?.('申请设备码异常，请检查网络。', 'error');
+      updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, '设备码申请失败'), step1Error: formatAuthError(error, '设备码申请失败') });
+      showToast?.('申请设备码异常，请检查 network。', 'error');
     } finally {
       updateSpecialVerifyDialog({ starting: false });
     }
@@ -734,11 +742,11 @@ export default function ProviderManager({
   };
 
   const startInlineCodexOAuth = async () => {
-    updateSpecialVerifyDialog({ starting: true, error: '', providerVerifyResult: null, exchangeResult: null });
+    updateSpecialVerifyDialog({ starting: true, error: '', providerVerifyResult: null, exchangeResult: null, step1Success: '', step1Error: '' });
     try {
       const result = await startCodexOAuth();
       if (result.error || !result.url) {
-        updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || '授权链接生成失败') });
+        updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || '授权链接生成失败'), step1Error: formatAuthError(result.error || '授权链接生成失败') });
         showToast?.('授权链接生成失败：' + (result.error || ''), 'error');
         return;
       }
@@ -749,10 +757,11 @@ export default function ProviderManager({
         state: result.state,
         expiresAt: Date.now() + 10 * 60 * 1000,
         callbackUrl: '',
+        step1Success: '授权链接生成成功！请在下方第 2 步中完成授权。'
       });
       showToast?.('授权链接生成成功，请在外部完成授权！', 'success');
     } catch (error) {
-      updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, '授权链接生成失败') });
+      updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, '授权链接生成失败'), step1Error: formatAuthError(error, '授权链接生成失败') });
       showToast?.('生成授权链接失败，网络请求异常。', 'error');
     } finally {
       updateSpecialVerifyDialog({ starting: false });
@@ -792,11 +801,11 @@ export default function ProviderManager({
   };
 
   const startInlineAntigravityOAuth = async () => {
-    updateSpecialVerifyDialog({ starting: true, error: '', providerVerifyResult: null, exchangeResult: null });
+    updateSpecialVerifyDialog({ starting: true, error: '', providerVerifyResult: null, exchangeResult: null, step1Success: '', step1Error: '' });
     try {
       const result = await startAntigravityOAuth();
       if (result.error || !result.url) {
-        updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || '授权链接生成失败') });
+        updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(result.error || '授权链接生成失败'), step1Error: formatAuthError(result.error || '授权链接生成失败') });
         showToast?.('授权链接生成失败：' + (result.error || ''), 'error');
         return;
       }
@@ -807,10 +816,11 @@ export default function ProviderManager({
         state: result.state,
         expiresAt: Date.now() + 10 * 60 * 1000,
         callbackUrl: '',
+        step1Success: '模拟授权链接生成成功！请在下方第 2 步中完成授权。'
       });
       showToast?.('授权链接生成成功，请在外部完成授权！', 'success');
     } catch (error) {
-      updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, '授权链接生成失败') });
+      updateSpecialVerifyDialog({ status: 'error', error: formatAuthError(error, '授权链接生成失败'), step1Error: formatAuthError(error, '授权链接生成失败') });
       showToast?.('生成授权链接失败，网络请求异常。', 'error');
     } finally {
       updateSpecialVerifyDialog({ starting: false });
@@ -1070,11 +1080,12 @@ export default function ProviderManager({
     }
   };
 
-  const handleVerifyCategory = async (keys) => {
+  const handleVerifyCategory = async (keys, categoryId, categoryLabel) => {
     const activeKeys = keys.filter(k => !!providers[k]);
     if (activeKeys.length === 0) return;
 
-    showToast?.('开始验证该分类下所有已配置的供应商接口连接...', 'info');
+    showToast?.(`开始验证 ${categoryLabel} 下所有已配置的供应商接口连接...`, 'info');
+    setCategoryProgress({ category: categoryId, type: 'link', current: 0, total: activeKeys.length });
 
     setLoading(prev => {
       const next = { ...prev };
@@ -1085,6 +1096,7 @@ export default function ProviderManager({
     });
 
     let successCount = 0;
+    let currentProgress = 0;
     for (const key of activeKeys) {
       try {
         const result = await verifyProvider(key, {});
@@ -1097,31 +1109,75 @@ export default function ProviderManager({
         }));
       } finally {
         setLoading(prev => ({ ...prev, [key]: false }));
+        currentProgress++;
+        setCategoryProgress(prev => prev ? { ...prev, current: currentProgress } : null);
       }
     }
     showToast?.(`一键连接验证完成！成功: ${successCount}/${activeKeys.length}`, 'success');
+    setTimeout(() => {
+      setCategoryProgress(null);
+    }, 1500);
   };
 
-  const handleVerifyCategoryModels = async (keys) => {
+  const handleVerifyCategoryModels = async (keys, categoryId, categoryLabel) => {
     const activeKeys = keys.filter(k => !!providers[k] && providers[k].models && providers[k].models.length > 0);
     if (activeKeys.length === 0) {
       showToast?.('当前分类没有可供验证的模型！', 'warning');
       return;
     }
 
-    showToast?.('开始一键验证该分类下所有已配置供应商的模型可用性...', 'info');
+    showToast?.(`开始一键验证 ${categoryLabel} 下所有已配置供应商的模型可用性...`, 'info');
+    setCategoryProgress({ category: categoryId, type: 'model', current: 0, total: activeKeys.length });
 
+    let currentProgress = 0;
     await Promise.all(
       activeKeys.map(async (key) => {
         try {
           await handleVerifyModels(key);
         } catch (error) {
           console.error(`Error verifying models for ${key}:`, error);
+        } finally {
+          currentProgress++;
+          setCategoryProgress(prev => prev ? { ...prev, current: currentProgress } : null);
         }
       })
     );
 
-    showToast?.('该分类下所有供应商的模型验证完成！', 'success');
+    showToast?.(`该分类下所有供应商的模型验证完成！`, 'success');
+    setTimeout(() => {
+      setCategoryProgress(null);
+    }, 1500);
+  };
+
+  const renderCategoryProgressBar = (categoryId) => {
+    if (!categoryProgress || categoryProgress.category !== categoryId) return null;
+    const percentage = Math.round((categoryProgress.current / categoryProgress.total) * 100) || 0;
+    return (
+      <div className="category-progress-container" style={{
+        margin: '8px 20px',
+        background: 'var(--bg-tertiary)',
+        borderRadius: '8px',
+        padding: '10px 14px',
+        border: '1px solid var(--border-color)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-secondary)' }}>
+          <span>正在进行一键验证 {categoryProgress.type === 'link' ? '链接' : '模型'}...</span>
+          <span>{categoryProgress.current} / {categoryProgress.total} ({percentage}%)</span>
+        </div>
+        <div style={{ width: '100%', height: '6px', background: 'rgba(0,0,0,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
+          <div style={{
+            width: `${percentage}%`,
+            height: '100%',
+            background: 'var(--accent)',
+            borderRadius: '3px',
+            transition: 'width 0.3s ease'
+          }}></div>
+        </div>
+      </div>
+    );
   };
 
   const handleVerifyModels = async (providerId) => {
@@ -2132,7 +2188,7 @@ export default function ProviderManager({
                                         disabled={isCategoryLoading}
                                         onClick={(e) => { 
                                           e.stopPropagation(); 
-                                          handleVerifyCategory(keys); 
+                                          handleVerifyCategory(keys, 'configured', '已配置的供应商'); 
                                         }}
                                       >
                                         {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
@@ -2143,9 +2199,8 @@ export default function ProviderManager({
                                         disabled={isCategoryModelsLoading}
                                         onClick={(e) => { 
                                           e.stopPropagation(); 
-                                          handleVerifyCategoryModels(keys); 
+                                          handleVerifyCategoryModels(keys, 'configured', '已配置的供应商'); 
                                         }}
-                                        style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}
                                       >
                                         {isCategoryModelsLoading ? <Loader size={10} className="spin" /> : <Sparkles size={10} />}
                                         {isCategoryModelsLoading ? '验证中...' : '一键验证模型'}
@@ -2154,6 +2209,7 @@ export default function ProviderManager({
                                   );
                                 })()}
                               </div>
+                              {renderCategoryProgressBar('configured')}
                               {configuredExpanded && configuredCommon.map(renderRow)}
                             </>
                           )}
@@ -2177,7 +2233,7 @@ export default function ProviderManager({
                                         disabled={isCategoryLoading}
                                         onClick={(e) => { 
                                           e.stopPropagation(); 
-                                          handleVerifyCategory(keys); 
+                                          handleVerifyCategory(keys, 'global', '全球常用模型供应商'); 
                                         }}
                                       >
                                         {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
@@ -2188,9 +2244,8 @@ export default function ProviderManager({
                                         disabled={isCategoryModelsLoading}
                                         onClick={(e) => { 
                                           e.stopPropagation(); 
-                                          handleVerifyCategoryModels(keys); 
+                                          handleVerifyCategoryModels(keys, 'global', '全球常用模型供应商'); 
                                         }}
-                                        style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}
                                       >
                                         {isCategoryModelsLoading ? <Loader size={10} className="spin" /> : <Sparkles size={10} />}
                                         {isCategoryModelsLoading ? '验证中...' : '一键验证模型'}
@@ -2199,6 +2254,7 @@ export default function ProviderManager({
                                   );
                                 })()}
                               </div>
+                              {renderCategoryProgressBar('global')}
                               {globalExpanded && globalCommon.map(renderRow)}
                             </>
                           )}
@@ -2222,7 +2278,7 @@ export default function ProviderManager({
                                         disabled={isCategoryLoading}
                                         onClick={(e) => { 
                                           e.stopPropagation(); 
-                                          handleVerifyCategory(keys); 
+                                          handleVerifyCategory(keys, 'domestic', '国产常用模型供应商'); 
                                         }}
                                       >
                                         {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
@@ -2233,9 +2289,8 @@ export default function ProviderManager({
                                         disabled={isCategoryModelsLoading}
                                         onClick={(e) => { 
                                           e.stopPropagation(); 
-                                          handleVerifyCategoryModels(keys); 
+                                          handleVerifyCategoryModels(keys, 'domestic', '国产常用模型供应商'); 
                                         }}
-                                        style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}
                                       >
                                         {isCategoryModelsLoading ? <Loader size={10} className="spin" /> : <Sparkles size={10} />}
                                         {isCategoryModelsLoading ? '验证中...' : '一键验证模型'}
@@ -2244,6 +2299,7 @@ export default function ProviderManager({
                                   );
                                 })()}
                               </div>
+                              {renderCategoryProgressBar('domestic')}
                               {domesticExpanded && domesticCommon.map(renderRow)}
                             </>
                           )}
@@ -2267,7 +2323,7 @@ export default function ProviderManager({
                                         disabled={isCategoryLoading}
                                         onClick={(e) => { 
                                           e.stopPropagation(); 
-                                          handleVerifyCategory(keys); 
+                                          handleVerifyCategory(keys, 'others', '其他模型供应商'); 
                                         }}
                                       >
                                         {isCategoryLoading ? <RefreshCw size={10} className="spin" /> : <RefreshCw size={10} />}
@@ -2278,9 +2334,8 @@ export default function ProviderManager({
                                         disabled={isCategoryModelsLoading}
                                         onClick={(e) => { 
                                           e.stopPropagation(); 
-                                          handleVerifyCategoryModels(keys); 
+                                          handleVerifyCategoryModels(keys, 'others', '其他模型供应商'); 
                                         }}
-                                        style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: 'rgba(99, 102, 241, 0.3)', color: '#a5b4fc' }}
                                       >
                                         {isCategoryModelsLoading ? <Loader size={10} className="spin" /> : <Sparkles size={10} />}
                                         {isCategoryModelsLoading ? '验证中...' : '一键验证模型'}
@@ -2289,6 +2344,7 @@ export default function ProviderManager({
                                   );
                                 })()}
                               </div>
+                              {renderCategoryProgressBar('others')}
                               {othersExpanded && others.map(renderRow)}
                             </>
                           )}
@@ -2488,12 +2544,12 @@ export default function ProviderManager({
                                   marginTop: '0px',
                                   marginBottom: '20px',
                                   padding: '16px',
-                                  background: 'rgba(255, 255, 255, 0.02)',
-                                  border: '1px dashed rgba(255, 255, 255, 0.08)',
+                                  background: 'var(--bg-primary)',
+                                  border: '1px dashed var(--border-color)',
                                   borderRadius: '12px'
                                 }}>
-                                  <h5 style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#e5e7eb', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                                    <Sparkles size={14} style={{ color: '#818cf8' }} /> 推荐的预置模型列表：
+                                  <h5 style={{ margin: '0 0 10px 0', fontSize: '13px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                                    <Sparkles size={14} style={{ color: 'var(--accent)' }} /> 推荐的预置模型列表：
                                   </h5>
                                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                                     {availablePresets.map(m => {
@@ -2505,8 +2561,8 @@ export default function ProviderManager({
                                           type="button"
                                           className="btn btn-sm btn-secondary"
                                           style={{
-                                            background: 'rgba(255, 255, 255, 0.03)',
-                                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                                            background: 'var(--bg-secondary)',
+                                            border: '1px solid var(--border-color)',
                                             borderRadius: '8px',
                                             padding: '6px 10px',
                                             display: 'inline-flex',
@@ -2515,7 +2571,7 @@ export default function ProviderManager({
                                             fontSize: '12px',
                                             opacity: reachedLimit ? 0.6 : 1,
                                             cursor: reachedLimit ? 'not-allowed' : 'pointer',
-                                            color: '#e5e7eb',
+                                            color: 'var(--text-primary)',
                                             transition: 'all 0.2s'
                                           }}
                                           title={reachedLimit ? '游客模式单个供应商最多添加3个模型' : `添加 ${m.name}`}
@@ -2528,7 +2584,7 @@ export default function ProviderManager({
                                           }}
                                         >
                                           <span style={{ fontWeight: 500 }}>{m.name}</span>
-                                          <span style={{ fontSize: '10px', opacity: 0.6, background: 'rgba(255,255,255,0.08)', padding: '2px 4px', borderRadius: '4px' }}>
+                                          <span style={{ fontSize: '10px', opacity: 0.8, background: 'var(--bg-tertiary)', color: 'var(--text-secondary)', padding: '2px 4px', borderRadius: '4px' }}>
                                             {m.type === 'text' ? '文本' : m.type === 'image' ? '图片' : m.type === 'video' ? '视频' : m.type === 'audio' ? '音频' : m.type}
                                           </span>
                                           <Plus size={12} />
@@ -2684,10 +2740,20 @@ export default function ProviderManager({
                     <div className="pm-auth-step-index">1</div>
                     <div className="pm-auth-step-content">
                       <h3>申请 GitHub 设备码</h3>
-                      <p>授权页会打开到 GitHub，本地验证状态会留在当前页面；失败后可直接重试。</p>
+                      <p>授权页会打开 to GitHub，本地验证状态会留在当前页面；失败后可直接重试。</p>
                       <button className="btn btn-primary" onClick={startInlineCopilotDeviceFlow} disabled={specialVerifyDialog.starting}>
                         {specialVerifyDialog.starting ? <Loader size={14} className="spin" /> : <LogIn size={14} />} {specialVerifyDialog.userCode ? '重新申请设备码' : '申请设备码'}
                       </button>
+                      {specialVerifyDialog.step1Success && (
+                        <div style={{ marginTop: '8px', color: 'var(--success)', fontSize: '13px', fontWeight: '500' }}>
+                          ✓ {specialVerifyDialog.step1Success}
+                        </div>
+                      )}
+                      {specialVerifyDialog.step1Error && (
+                        <div style={{ marginTop: '8px', color: 'var(--error)', fontSize: '13px', fontWeight: '500' }}>
+                          ✗ {specialVerifyDialog.step1Error}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -2729,6 +2795,16 @@ export default function ProviderManager({
                     <button className="btn btn-primary" onClick={startInlineCodexOAuth} disabled={specialVerifyDialog.starting}>
                       {specialVerifyDialog.starting ? <Loader size={14} className="spin" /> : <LogIn size={14} />} 生成授权链接
                     </button>
+                    {specialVerifyDialog.step1Success && (
+                      <div style={{ marginTop: '8px', color: 'var(--success)', fontSize: '13px', fontWeight: '500' }}>
+                        ✓ {specialVerifyDialog.step1Success}
+                      </div>
+                    )}
+                    {specialVerifyDialog.step1Error && (
+                      <div style={{ marginTop: '8px', color: 'var(--error)', fontSize: '13px', fontWeight: '500' }}>
+                        ✗ {specialVerifyDialog.step1Error}
+                      </div>
+                    )}
                   </div>
 
                   {specialVerifyDialog.authUrl && (
@@ -2767,6 +2843,16 @@ export default function ProviderManager({
                     <button className="btn btn-primary" onClick={startInlineAntigravityOAuth} disabled={specialVerifyDialog.starting}>
                       {specialVerifyDialog.starting ? <Loader size={14} className="spin" /> : <LogIn size={14} />} 生成授权链接
                     </button>
+                    {specialVerifyDialog.step1Success && (
+                      <div style={{ marginTop: '8px', color: 'var(--success)', fontSize: '13px', fontWeight: '500' }}>
+                        ✓ {specialVerifyDialog.step1Success}
+                      </div>
+                    )}
+                    {specialVerifyDialog.step1Error && (
+                      <div style={{ marginTop: '8px', color: 'var(--error)', fontSize: '13px', fontWeight: '500' }}>
+                        ✗ {specialVerifyDialog.step1Error}
+                      </div>
+                    )}
                   </div>
 
                   {specialVerifyDialog.authUrl && (
