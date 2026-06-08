@@ -394,12 +394,12 @@ export default function LoginGate({ onLoginSuccess, showToast }) {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
             </svg>
-            <span>SpaceDream AI</span>
+            <span>SpaceDream AI Model Hub</span>
           </div>
 
           <div className="brand-main">
-            <h1>开启您的多模型<br />应用创作中心</h1>
-            <p>SpaceDream 是一款面向开发者的 AI 资源聚合与多模态合成中心。通过平铺卡片直接管理您的所有供应商 API Key，安全隔离配置，并提供丰富的数据调用仪表盘。</p>
+            <h1>开启您的多模型<br />应用控制中心</h1>
+            <p>SpaceDream AI Model Hub 是一款面向开发者的 AI 资源集成平台与 API 代理网关。它支持 API Key、Token 及 OAuth 2.0 统一管理，支持一键通道与模型批量验证，并提供标准的 OpenAI API 代理导出以供 Cursor 等外部开发工具无缝调用。</p>
           </div>
 
           <div className="brand-footer">

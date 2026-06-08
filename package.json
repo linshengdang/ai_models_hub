@@ -1,6 +1,8 @@
 {
   "name": "demoui4ai",
   "version": "1.0.0",
+  "description": "SpaceDream AI Model Hub - 现代化多大语言模型集成管理平台与 API 代理网关，支持一键部署，无缝接入 Cursor / VS Code 等开发工具",
+  "author": "dawn (SpaceDream)",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
