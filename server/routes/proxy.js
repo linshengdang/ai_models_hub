@@ -139,7 +139,7 @@ router.post('/chat/completions', async (req, res) => {
   }
   
   const { providerId, modelId } = resolved;
-  const targetPort = req.socket.localPort || process.env.PORT || 3001;
+  const targetPort = req.socket.localPort || process.env.PORT || 5173;
   const targetUrl = `http://localhost:${targetPort}/api/chat/completions`;
   
   try {

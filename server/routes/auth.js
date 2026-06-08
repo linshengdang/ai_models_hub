@@ -1580,7 +1580,7 @@ router.post('/antigravity/start', async (req, res) => {
     };
     writeOAuthState(oauthState);
 
-    const url = `http://localhost:3001/api/auth/antigravity/mock-authorize?state=${state}`;
+    const url = `http://localhost:5173/api/auth/antigravity/mock-authorize?state=${state}`;
     return res.json({ success: true, url, state });
   } catch (error) {
     return res.status(500).json({ error: error.message });

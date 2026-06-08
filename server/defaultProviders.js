@@ -123,8 +123,8 @@ export const defaultProviders = {
     isCommon: true,
     isDomestic: false,
     oauth: {
-      authorizeUrl: "http://localhost:3001/api/auth/antigravity/mock-authorize",
-      tokenUrl: "http://localhost:3001/api/auth/antigravity/mock-token",
+      authorizeUrl: "http://localhost:5173/api/auth/antigravity/mock-authorize",
+      tokenUrl: "http://localhost:5173/api/auth/antigravity/mock-token",
       clientId: "antigravity-client-id-12345",
       redirectUri: "http://localhost:1455/auth/callback",
       scope: "openid profile offline_access"

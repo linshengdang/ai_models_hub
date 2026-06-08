@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename);
 loadLocalEnv(path.join(__dirname, '..'));
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5173;
 
 app.use(cors());
 app.use((req, res, next) => {

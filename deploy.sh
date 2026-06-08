@@ -118,7 +118,7 @@ fi
 
 # 5. Process Process Management (PM2 or Nohup)
 echo -e "\n${YELLOW}[Step 5/5] 启动/重启后端 Node.js 服务进程...${NC}"
-PORT=${PORT:-3001}
+PORT=${PORT:-5173}
 
 if command -v pm2 >/dev/null 2>&1; then
   echo -e "${GREEN}✓ 检测到已安装 PM2 进程管理器，将使用 PM2 进行零停机部署。${NC}"

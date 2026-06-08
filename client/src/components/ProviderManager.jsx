@@ -2726,7 +2726,7 @@ export default function ProviderManager({
                   {specialVerifyDialog.error}
                   {specialVerifyDialog.providerId === 'github_copilot' && (
                     <ul className="pm-auth-troubleshoot">
-                      <li>确认后端服务正在运行：localhost:3001 能访问。</li>
+                      <li>确认后端服务正在运行：localhost:5173 能访问。</li>
                       <li>如果 GitHub 页面已经显示 connected，请回到这里点“我已完成授权，立即验证”。</li>
                       <li>如果设备码过期，重新申请设备码即可。</li>
                     </ul>
