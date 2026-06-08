@@ -273,6 +273,15 @@ export async function loginUser(username, password) {
   return res.json();
 }
 
+export async function changePassword(username, oldPassword, newPassword) {
+  const res = await fetch(`${API_BASE}/auth/users/change-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, oldPassword, newPassword }),
+  });
+  return res.json();
+}
+
 export async function startAntigravityOAuth() {
   const res = await fetch(`${API_BASE}/auth/antigravity/start`, {
     method: 'POST',

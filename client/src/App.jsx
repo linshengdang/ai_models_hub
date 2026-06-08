@@ -4,8 +4,8 @@ import ChatView from './components/ChatView';
 import ProviderManager from './components/ProviderManager';
 import StatsDashboard from './components/StatsDashboard';
 import LoginGate from './components/LoginGate';
-import { fetchProviders, fetchDefaultProviders, registerUser, loginUser } from './api';
-import { Home, MessageSquare, Settings, Bot, X, ChevronDown, Check, User, LogOut, BarChart2 } from 'lucide-react';
+import { fetchProviders, fetchDefaultProviders, registerUser, loginUser, changePassword } from './api';
+import { Home, MessageSquare, Settings, Bot, X, ChevronDown, Check, User, LogOut, BarChart2, Key } from 'lucide-react';
 
 function ChatSelect({ className, value, placeholder, options, groups, disabled, onChange, renderLabel, renderOption }) {
   const [open, setOpen] = useState(false);
@@ -338,6 +338,11 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -383,6 +388,44 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
     }
   };
 
+  const handleChangePasswordSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!oldPassword || !newPassword || !confirmNewPassword) {
+      setError('所有字段均为必填项');
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setError('新密码与确认新密码不一致');
+      return;
+    }
+    if (newPassword === oldPassword) {
+      setError('新密码不能与旧密码相同');
+      return;
+    }
+
+    try {
+      const res = await changePassword(currentUser, oldPassword, newPassword);
+      if (res.error) {
+        setError(res.error);
+      } else {
+        setSuccess('密码修改成功！');
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+        setTimeout(() => {
+          setIsChangingPassword(false);
+          setError('');
+          setSuccess('');
+        }, 1500);
+      }
+    } catch (err) {
+      setError(err.message || '操作失败，请重试');
+    }
+  };
+
   const handleLogout = async () => {
     localStorage.removeItem('hub-user-id');
     localStorage.removeItem('hub-user-mode');
@@ -403,14 +446,78 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
         </div>
         <div className="user-modal-body">
           {currentUserMode === 'user' ? (
-            <div className="user-profile-view">
-              <div className="user-avatar">👤</div>
-              <h4>{currentUser}</h4>
-              <p className="user-status-text">已登录，您的配置数据已完全隔离存储。</p>
-              <button className="btn btn-danger btn-logout" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '0 auto' }}>
-                <LogOut size={14} /> 退出登录 / 切换模式
-              </button>
-            </div>
+            isChangingPassword ? (
+              <div className="user-profile-view" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div className="user-avatar">👤</div>
+                  <h4 style={{ margin: '8px 0' }}>修改您的密码</h4>
+                  <p className="user-status-text" style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                    用户名: {currentUser}
+                  </p>
+                </div>
+
+                {error && <div className="user-auth-error">{error}</div>}
+                {success && <div className="user-auth-success">{success}</div>}
+
+                <form onSubmit={handleChangePasswordSubmit} className="user-auth-form" style={{ width: '100%' }}>
+                  <div className="auth-form-field" style={{ marginBottom: '10px' }}>
+                    <label style={{ fontSize: '11px' }}>当前旧密码</label>
+                    <input
+                      type="password"
+                      placeholder="请输入当前密码..."
+                      value={oldPassword}
+                      onChange={e => setOldPassword(e.target.value)}
+                      required
+                      style={{ padding: '8px' }}
+                    />
+                  </div>
+                  <div className="auth-form-field" style={{ marginBottom: '10px' }}>
+                    <label style={{ fontSize: '11px' }}>新密码</label>
+                    <input
+                      type="password"
+                      placeholder="请输入新密码..."
+                      value={newPassword}
+                      onChange={e => setNewPassword(e.target.value)}
+                      required
+                      style={{ padding: '8px' }}
+                    />
+                  </div>
+                  <div className="auth-form-field" style={{ marginBottom: '12px' }}>
+                    <label style={{ fontSize: '11px' }}>确认新密码</label>
+                    <input
+                      type="password"
+                      placeholder="请再次输入新密码..."
+                      value={confirmNewPassword}
+                      onChange={e => setConfirmNewPassword(e.target.value)}
+                      required
+                      style={{ padding: '8px' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button type="button" className="btn btn-secondary" onClick={() => { setIsChangingPassword(false); setError(''); setSuccess(''); }} style={{ flex: 1, padding: '8px' }}>
+                      返回
+                    </button>
+                    <button type="submit" className="btn btn-primary" style={{ flex: 1, padding: '8px' }}>
+                      确认修改
+                    </button>
+                  </div>
+                </form>
+              </div>
+            ) : (
+              <div className="user-profile-view">
+                <div className="user-avatar">👤</div>
+                <h4>{currentUser}</h4>
+                <p className="user-status-text">已登录，您的配置数据已完全隔离存储。</p>
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '16px' }}>
+                  <button className="btn btn-secondary" onClick={() => { setIsChangingPassword(true); setError(''); setSuccess(''); }} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Key size={14} /> 修改密码
+                  </button>
+                  <button className="btn btn-danger btn-logout" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '0' }}>
+                    <LogOut size={14} /> 退出登录 / 切换模式
+                  </button>
+                </div>
+              </div>
+            )
           ) : (
             <div className="user-profile-view" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ textAlign: 'center' }}>

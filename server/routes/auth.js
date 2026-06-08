@@ -1867,4 +1867,32 @@ router.post('/users/login', (req, res) => {
   res.json({ success: true, username: safeUsername });
 });
 
+router.post('/users/change-password', (req, res) => {
+  const { username, oldPassword, newPassword } = req.body || {};
+  if (!username || !oldPassword || !newPassword) {
+    return res.status(400).json({ error: '用户名、旧密码和新密码不能为空' });
+  }
+  const safeUsername = username.trim();
+
+  const usersPath = path.join(__dirname, '..', 'data', 'users.json');
+  let users = {};
+  if (fs.existsSync(usersPath)) {
+    try {
+      users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+    } catch {
+      users = {};
+    }
+  }
+
+  const user = users[safeUsername];
+  if (!user || user.password !== oldPassword) {
+    return res.status(400).json({ error: '旧密码错误' });
+  }
+
+  users[safeUsername] = { password: newPassword };
+  fs.writeFileSync(usersPath, JSON.stringify(users, null, 2));
+
+  res.json({ success: true, message: '密码修改成功！' });
+});
+
 export default router;
