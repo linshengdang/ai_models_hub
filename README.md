@@ -130,6 +130,6 @@ DASHSCOPE_API_KEY=your_qwen_key
 
 ## 👥 作者与联系方式
 
-- **作者**：linshengdang (SpaceDream)
+- **作者**：dawn (SpaceDream)
 - **联系方式 (QQ)**：44210509
 - **说明**：如果您在使用、部署或二次开发中遇到任何问题，欢迎通过 QQ 与我联系交流。
