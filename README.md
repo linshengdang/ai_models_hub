@@ -1,6 +1,15 @@
 # SpaceDream AI Model Hub (多模型集成与 API 代理网关)
 
+<p align="left">
+  <img src="https://img.shields.io/badge/node-%3E%3D%2018.0.0-brightgreen.svg?style=flat" alt="Node.js Version" />
+  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" />
+  <img src="https://img.shields.io/github/stars/linshengdang/ai_models_hub.svg?style=social" alt="GitHub stars" />
+  <img src="https://img.shields.io/github/forks/linshengdang/ai_models_hub.svg?style=social" alt="GitHub forks" />
+</p>
+
 SpaceDream AI Model Hub 是一个现代化、美观且高可用的多大语言模型集成管理平台。它不仅提供统一的 Web 用户界面用于配置和测试各类国内外主流大模型供应商，还内置了**外部 API 代理网关**，支持通过标准的 OpenAI API 格式将所有配置好的模型聚合导出，提供给 Cursor、VS Code Copilot 等外部工具使用。
+
+> **English:** A modern, sleek AI Model Hub & API Proxy Gateway supporting OpenAI, Claude, Gemini, DeepSeek, and more. Integrates via API Key, Token, or OAuth 2.0. Exposes all active models through a unified OpenAI-compatible API format for easy integration into Cursor, VS Code, and other development tools.
 
 ---
 
