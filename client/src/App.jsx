@@ -317,6 +317,7 @@ export default function App() {
               defaults={defaults}
               onGoSettings={goToSettings}
               shortcuts={shortcuts}
+              showToast={showToast}
             />
           )}
           {page === 'stats' && (

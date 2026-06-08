@@ -8,6 +8,7 @@ import chatRoutes from './routes/chat.js';
 import fileRoutes from './routes/files.js';
 import authRoutes from './routes/auth.js';
 import statsRoutes from './routes/stats.js';
+import proxyRoutes from './routes/proxy.js';
 import { loadLocalEnv } from './env.js';
 
 import { userStorage } from './context.js';
@@ -49,6 +50,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/v1', proxyRoutes);
 
 // Serve standalone verification pages from client/public
 const clientPublicDir = path.join(__dirname, '..', 'client', 'public');

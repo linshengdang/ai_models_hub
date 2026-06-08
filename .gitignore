@@ -6,3 +6,9 @@ server/uploads/*
 *.log
 .deploy_config
 
+# Exclude user configurations and statistics data from git tracking
+server/data/config_*.json
+server/data/users.json
+server/data/oauth-state.json
+server/data/fetched_models.json
+server/data/stats.json
