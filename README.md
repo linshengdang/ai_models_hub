@@ -13,6 +13,16 @@ SpaceDream AI Model Hub 是一个现代化、美观且高可用的多大语言�
 
 ---
 
+## 🖥️ 页面预览
+
+| 📊 数据仪表盘与调用统计 | ⚙️ 供应商快速配置面板 |
+| :---: | :---: |
+| ![数据统计仪表盘](docs/images/dashboard.png) | ![配置面板列表](docs/images/settings_list.png) |
+| **🔐 三步式 OAuth 授权绑定** | **🧬 预置多模态模型校验** |
+| ![OAuth授权流](docs/images/oauth_flow.png) | ![模型校验列表](docs/images/models_list.png) |
+
+---
+
 ## 🌟 核心功能
 
 1. **三合一多模式身份验证**：支持 `API Key` 直连、`Token` 验证以及标准 `OAuth 2.0`（GitHub Copilot/Codex/Antigravity）授权绑定。
@@ -25,6 +35,73 @@ SpaceDream AI Model Hub 是一个现代化、美观且高可用的多大语言�
    - 统一密钥格式：`sk-spacedream-<username>` (如 `sk-spacedream-dddd`)。
    - 智能路由：不同供应商的同名模型自动添加前缀区分（如 `openai-gpt-4o` 与 `github_copilot-gpt-4o`），支持外部工具无缝接入。
 5. **一键自动部署 (Self-healing)**：部署脚本包含 Node.js 运行环境自动检测与升级逻辑，无痛迁移与部署上线。
+
+---
+
+## 🧬 代理网关架构与认证流程
+
+### 1. 整体网关架构设计
+
+SpaceDream AI Model Hub 作为一个集成网关，它扮演了客户端（如 Cursor、Python SDK）与各大模型供应商（如 OpenAI、GitHub Copilot、DeepSeek）之间的透明代理。
+
+下面的架构图展示了请求流向及身份认证的校验机制：
+
+```mermaid
+graph TD
+    Client[开发工具 / 客户端 e.g. Cursor, VS Code, Browser UI] -- "1. API 请求 (/v1/chat/completions)" --> ProxyGateway[SpaceDream API 代理网关 server/index.js]
+    ProxyGateway -- "2. 校验密钥 (sk-spacedream-xxx)" --> AuthManager[用户验证/权限模块]
+    ProxyGateway -- "3. 匹配供应商配置" --> ProviderConfig[配置管理模块 server/data/config_xxx.json]
+    
+    ProviderConfig -- "A. API Key 直连模式" --> ProxyAPI[API 代理执行模块]
+    ProviderConfig -- "B. OAuth 2.0 托管模式" --> TokenManager[OAuth Token 刷新与加载模块]
+    
+    TokenManager -- "携带 Access Token" --> ProxyOAuth[OAuth 代理执行模块]
+    
+    ProxyAPI -- "代理转发" --> ExternalAPI[外部 AI 供应商端点 e.g. DeepSeek, OpenAI, Gemini]
+    ProxyOAuth -- "代理转发" --> ExternalOAuthAPI[外部 OAuth 供应商端点 e.g. Copilot, Antigravity]
+```
+
+### 2. 供应商认证流程
+
+平台支持三种认证方式，其验证流程各不相同：
+
+#### A. API Key 直连模式 (直连认证)
+- **原理**：用户输入供应商提供的 API Key，后端直接将其加密保存在用户沙箱中。在代理外部工具调用时，网关读取该 API Key 并在 HTTP 请求头中附加（如 `Authorization: Bearer <API_KEY>` 或 `x-api-key: <API_KEY>`），直接与供应商通信。
+- **适用平台**：OpenAI, DeepSeek, Claude, Google Gemini, Kimi, 通义千问, 字节豆包等。
+
+#### B. Token 令牌模式
+- **原理**：直接使用会话级别的 Bearer 令牌或临时 Token，同样在代理时直接附加至请求头中。
+- **适用平台**：部分需要临时授权的开发通道。
+
+#### C. OAuth 2.0 授权托管模式
+- **原理**：通过 GitHub OAuth 或 Antigravity 模拟授权，使用 OAuth 换取的 Access Token 和 Refresh Token 进行身份认证，并支持自动刷新过期 Token。
+- **时序交互流程图**：
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 开发者/用户
+    participant Frontend as 前端界面 (Web UI)
+    participant Backend as 后端服务器 (Node.js)
+    participant Provider as 供应商 OAuth 服务 (GitHub / Antigravity)
+
+    User->>Frontend: 点击“生成授权链接”
+    Frontend->>Backend: 请求授权 URL 包含 Client ID & Redirect URI
+    Backend-->>Frontend: 返回授权链接
+    Frontend->>User: 点击链接并在新标签页中打开
+    User->>Provider: 授权应用权限
+    Provider-->>User: 授权完成，重定向到 Callback URL (带 code & state)
+    User->>Frontend: 复制 Callback URL 并粘贴回输入框
+    User->>Frontend: 点击“写入 token 并验证接口”
+    Frontend->>Backend: 发送 Callback URL
+    Backend->>Provider: 向 Token 端点换取 Access Token & Refresh Token
+    Provider-->>Backend: 返回 Access Token / Refresh Token
+    Backend->>Backend: 保存 Token 到本地用户沙箱 (config_username.json)
+    Backend->>Provider: 使用新 Token 进行接口可用性验证
+    Provider-->>Backend: 验证通过
+    Backend-->>Frontend: 返回“授权验证成功”
+    Frontend-->>User: 界面提示“准备就绪 / 授权可用”
+```
 
 ---
 
