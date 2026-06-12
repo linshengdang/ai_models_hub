@@ -17,13 +17,6 @@ export default function LoginGate({ onLoginSuccess, showToast }) {
     showToast?.('成功进入 Demo 演示空间！', 'success');
   };
 
-  const handleGuestEntry = () => {
-    localStorage.setItem('hub-user-id', 'guest');
-    localStorage.setItem('hub-user-mode', 'guest');
-    onLoginSuccess('GuestUser', 'guest');
-    showToast?.('成功以游客身份进入空间！', 'success');
-  };
-
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
     if (!username.trim() || !password) {
@@ -411,7 +404,7 @@ export default function LoginGate({ onLoginSuccess, showToast }) {
         <div className="login-gate-auth">
           <div className="auth-title">
             <h2>选择体验方式</h2>
-            <p>提供以下三种环境供您体验平台全部功能</p>
+            <p>提供以下两种环境供您体验平台全部功能</p>
           </div>
 
           {/* Navigation Tabs */}
@@ -421,12 +414,6 @@ export default function LoginGate({ onLoginSuccess, showToast }) {
               onClick={() => { setActiveTab('demo'); setErrorMsg(''); setConfirmPassword(''); }}
             >
               Demo 演示
-            </button>
-            <button 
-              className={`auth-tab-btn ${activeTab === 'guest' ? 'active' : ''}`}
-              onClick={() => { setActiveTab('guest'); setErrorMsg(''); setConfirmPassword(''); }}
-            >
-              游客模式
             </button>
             <button 
               className={`auth-tab-btn ${activeTab === 'form' ? 'active' : ''}`}
@@ -465,39 +452,6 @@ export default function LoginGate({ onLoginSuccess, showToast }) {
               </button>
             </div>
           )}
-
-          {activeTab === 'guest' && (
-            <div className="tab-panel-desc">
-              <div className="desc-card">
-                <div className="desc-card-header">
-                  <div className="desc-card-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </div>
-                  <div className="desc-card-title">游客登录模式 (额度限制)</div>
-                </div>
-                <div className="desc-card-body">
-                  支持调用您配置的真实大模型 API 接口，体验真实的返回与网络情况。但为了平台稳定，此模式存在以下限额约束：
-                  <div className="limit-badge-grid">
-                    <div className="limit-badge">⚠️ 最多 5 个供应商</div>
-                    <div className="limit-badge">⚠️ 供应商限 3 个模型</div>
-                  </div>
-                </div>
-              </div>
-              <button className="btn-action-primary" onClick={handleGuestEntry}>
-                进入游客体验空间
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </button>
-            </div>
-          )}
-
           {activeTab === 'form' && (
             <form className="auth-form" onSubmit={handleAuthSubmit}>
               <div className="form-group">

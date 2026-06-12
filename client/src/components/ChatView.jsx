@@ -445,7 +445,7 @@ export default function ChatView({
   );
 
   const renderProxyDashboard = () => {
-    const username = localStorage.getItem('hub-user-id') || 'guest';
+    const username = localStorage.getItem('hub-user-id') || 'demo';
     const proxyApiKey = `sk-spacedream-${username}`;
     const proxyBaseUrl = `${window.location.origin}/v1`;
 

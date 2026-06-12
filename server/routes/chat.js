@@ -599,7 +599,7 @@ async function handleDemoChat(providerId, modelId, messages, res) {
 2. **多模态融合**：支持对话、图片生成、音视频合成等功能。
 3. **隔离用户配置**：注册登录后您的 key 将自动隔离加密保存。
 
-您可以去右上角/侧边栏切换为【游客模式】或【正常注册登录】来使用真实的 API！`;
+您可以去右上角/侧边栏切换为【正常注册登录】来使用真实的 API！`;
 
   if (lastMessage.toLowerCase().includes('code') || lastMessage.includes('代码') || lastMessage.includes('编程')) {
     responseText = `你好！检测到您提出了有关代码/编程的问题。当前处于【Demo 演示模式】下。
@@ -622,7 +622,7 @@ export default function Counter() {
 }
 \`\`\`
 
-您可以通过切换到“游客登录”或“正式登录”来体验大模型真实的实时代码生成能力！`;
+您可以通过“登录正式账号”来体验大模型真实的实时代码生成能力！`;
   }
 
   const words = responseText.split(/(?<=[\s\n\p{P}])|(?=[\s\n\p{P}])/u);

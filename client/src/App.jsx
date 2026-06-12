@@ -59,8 +59,15 @@ export default function App() {
   const [selectedModel, setSelectedModel] = useState('');
   const [settingsActiveTab, setSettingsActiveTab] = useState('general');
   const [settingsSelectedProviderId, setSettingsSelectedProviderId] = useState(null);
-  const [currentUser, setCurrentUser] = useState(() => localStorage.getItem('hub-user-id') || 'guest');
-  const [currentUserMode, setCurrentUserMode] = useState(() => localStorage.getItem('hub-user-mode') || null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    const uid = localStorage.getItem('hub-user-id');
+    const mode = localStorage.getItem('hub-user-mode');
+    return (mode === 'guest' || uid === 'guest') ? '' : (uid || '');
+  });
+  const [currentUserMode, setCurrentUserMode] = useState(() => {
+    const mode = localStorage.getItem('hub-user-mode');
+    return mode === 'guest' ? null : (mode || null);
+  });
   const [showUserModal, setShowUserModal] = useState(false);
   const [toasts, setToasts] = useState([]);
 
@@ -251,7 +258,7 @@ export default function App() {
           <div className="sidebar-user-section" onClick={() => setShowUserModal(true)} title="用户账户管理">
             <span className="user-icon"><User size={14} /></span>
             <span className="user-name">
-              {currentUser === 'guest' ? '游客 (点击登录)' : currentUserMode === 'demo' ? '演示 (点击切换)' : currentUser}
+              {currentUserMode === 'demo' ? '演示 (点击切换)' : currentUser}
             </span>
           </div>
           <div style={{ fontSize: '11px', opacity: 0.6 }}>
@@ -480,7 +487,7 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
   const handleLogout = async () => {
     localStorage.removeItem('hub-user-id');
     localStorage.removeItem('hub-user-mode');
-    setCurrentUser('guest');
+    setCurrentUser('');
     setCurrentUserMode(null);
     setSelectedProvider('');
     setSelectedModel('');
@@ -574,9 +581,9 @@ function UserModal({ currentUser, setCurrentUser, currentUserMode, setCurrentUse
             <div className="user-profile-view" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ textAlign: 'center' }}>
                 <div className="user-avatar">👤</div>
-                <h4 style={{ margin: '8px 0' }}>{currentUserMode === 'demo' ? '演示模式' : '游客模式'}</h4>
+                <h4 style={{ margin: '8px 0' }}>演示模式</h4>
                 <p className="user-status-text" style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                  您当前正处于{currentUserMode === 'demo' ? '演示' : '游客'}状态。想要切换体验模式或登录个人专属账户？
+                  您当前正处于演示状态。想要切换体验模式或登录个人专属账户？
                 </p>
               </div>
               <button className="btn btn-danger btn-logout" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '0 auto', background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', border: 'none', color: '#ffffff' }}>

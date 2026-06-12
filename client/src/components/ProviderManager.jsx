@@ -916,8 +916,7 @@ export default function ProviderManager({
     } else {
       const template = defaults[key];
       if (!template) return;
-      const userMode = localStorage.getItem('hub-user-mode');
-      const initialModels = userMode === 'guest' ? [] : template.models;
+      const initialModels = template.models;
       try {
         await saveProvider({
           id: key, name: template.name, baseUrl: template.baseUrl,
@@ -2553,8 +2552,6 @@ export default function ProviderManager({
                                   </h5>
                                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                                     {availablePresets.map(m => {
-                                      const isGuest = localStorage.getItem('hub-user-mode') === 'guest';
-                                      const reachedLimit = isGuest && (provider.models || []).length >= 3;
                                       return (
                                         <button
                                           key={m.id}
@@ -2569,17 +2566,12 @@ export default function ProviderManager({
                                             alignItems: 'center',
                                             gap: '6px',
                                             fontSize: '12px',
-                                            opacity: reachedLimit ? 0.6 : 1,
-                                            cursor: reachedLimit ? 'not-allowed' : 'pointer',
+                                            cursor: 'pointer',
                                             color: 'var(--text-primary)',
                                             transition: 'all 0.2s'
                                           }}
-                                          title={reachedLimit ? '游客模式单个供应商最多添加3个模型' : `添加 ${m.name}`}
+                                          title={`添加 ${m.name}`}
                                           onClick={() => {
-                                            if (reachedLimit) {
-                                              alert('游客限制：单个供应商最多支持 3 个模型。请注册并登录正式账号解锁无限额功能！');
-                                              return;
-                                            }
                                             handleAddModelWithPreset(provider.id, m);
                                           }}
                                         >

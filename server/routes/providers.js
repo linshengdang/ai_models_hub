@@ -81,6 +81,15 @@ const __dirname = path.dirname(__filename);
 
 const router = Router();
 
+// Block mutations for non-logged-in (guest) users
+router.use((req, res, next) => {
+  const userId = userStorage.getStore()?.userId || 'guest';
+  if (userId === 'guest' && req.method !== 'GET') {
+    return res.status(401).json({ error: '请登录后操作' });
+  }
+  next();
+});
+
 function getConfigPath() {
   const userId = userStorage.getStore()?.userId || 'guest';
   if (userId === 'guest') {
@@ -720,9 +729,6 @@ router.get('/', (req, res) => {
   const userId = userStorage.getStore()?.userId || 'guest';
   
   let providerEntries = Object.entries(config.providers);
-  if (userId === 'guest') {
-    providerEntries = providerEntries.slice(0, 5);
-  }
 
   const masked = {};
   for (const [key, provider] of providerEntries) {
@@ -752,9 +758,6 @@ router.get('/', (req, res) => {
     } : { authenticated: false };
 
     let models = provider.models || [];
-    if (userId === 'guest') {
-      models = models.slice(0, 3);
-    }
 
     masked[key] = {
       ...provider,
@@ -790,15 +793,7 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'id, name, and baseUrl are required' });
   }
 
-  const userId = userStorage.getStore()?.userId || 'guest';
   const config = readConfig();
-
-  if (userId === 'guest') {
-    const providerIds = Object.keys(config.providers);
-    if (!providerIds.includes(id) && providerIds.length >= 5) {
-      return res.status(403).json({ error: '游客限制：最多能同时支持 5 个供应商。请注册并登录正式账号解锁无限额功能！' });
-    }
-  }
 
   const existing = config.providers[id] || {};
   config.providers[id] = {
@@ -854,13 +849,7 @@ router.post('/:id/models', (req, res) => {
     return res.status(404).json({ error: 'Provider not found' });
   }
 
-  const userId = userStorage.getStore()?.userId || 'guest';
-  if (userId === 'guest') {
-    const currentModelsCount = (config.providers[id].models || []).length;
-    if (currentModelsCount >= 3) {
-      return res.status(403).json({ error: '游客限制：单个供应商最多支持 3 个模型。请注册并登录正式账号解锁无限额功能！' });
-    }
-  }
+
 
   if (!config.providers[id].models) config.providers[id].models = [];
   // Avoid duplicates
