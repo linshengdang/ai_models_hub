@@ -75,6 +75,22 @@ export default function InputBar({ onSend, disabled, modelType, onClear, shortcu
     ? '输入消息... (Shift+Enter 换行，Enter 发送)'
     : '输入消息... (Enter 换行，Cmd/Ctrl+Enter 发送)';
 
+  const handlePaste = (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) {
+          const preview = URL.createObjectURL(file);
+          const name = `screenshot_${Date.now()}.png`;
+          setAttachments(prev => [...prev, { file, preview, name, type: file.type }]);
+          e.preventDefault();
+        }
+      }
+    }
+  };
+
   return (
     <div className="input-bar">
       {/* Attachments preview */}
@@ -122,6 +138,7 @@ export default function InputBar({ onSend, disabled, modelType, onClear, shortcu
           value={text}
           onChange={e => setText(e.target.value)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
           placeholder={placeholder}
           disabled={disabled}
           rows={4}

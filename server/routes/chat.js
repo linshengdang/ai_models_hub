@@ -493,14 +493,43 @@ async function handleGoogleChat(provider, model, messages, res) {
   const systemMsg = messages.find(m => m.role === 'system');
   const nonSystemMsgs = messages.filter(m => m.role !== 'system');
 
-  const contents = nonSystemMsgs.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }],
-  }));
+  const contents = nonSystemMsgs.map(m => {
+    const role = m.role === 'assistant' ? 'model' : 'user';
+    const parts = [];
+
+    // Add text content
+    parts.push({ text: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) });
+
+    // Add multimodal files (images)
+    if (m.files && m.files.length > 0) {
+      for (const file of m.files) {
+        if (file.type?.startsWith('image/') && file.base64) {
+          const base64Data = file.base64.includes(',') ? file.base64.split(',')[1] : file.base64;
+          parts.push({
+            inlineData: {
+              mimeType: file.type,
+              data: base64Data
+            }
+          });
+        }
+      }
+    }
+
+    return { role, parts };
+  });
 
   const requestBody = { contents };
   if (systemMsg) {
     requestBody.systemInstruction = { parts: [{ text: systemMsg.content }] };
+  }
+
+  // Set thinking config to low thinking budget for Gemini 2.0/3.5 Flash models to save latency and cost
+  if (model.id.includes('flash') || model.id.includes('gemini-3') || model.id.includes('gemini-2')) {
+    requestBody.generationConfig = {
+      thinkingConfig: {
+        thinkingBudget: "low"
+      }
+    };
   }
 
   const response = await proxyFetch(url, {
